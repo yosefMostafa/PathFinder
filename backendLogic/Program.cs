@@ -6,7 +6,7 @@ using backendLogic.src.searchEngine.models;
 Console.WriteLine("🚀 PathFinder - Everything SDK Metadata Test");
 Console.WriteLine("=" + new string('=', 50));
 
-ProjectType search = new Node();
+ProjectType search = new PDF();
 await search.RunSearch();
  
 // string name = typeof(Program).Namespace ?? "None!";

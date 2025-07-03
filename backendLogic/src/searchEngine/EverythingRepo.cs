@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace backendLogic.src.searchEngine
@@ -24,6 +25,11 @@ namespace backendLogic.src.searchEngine
                 return;
             }
             int numResults = EverythingApi.Everything_GetNumResults();
+            if (numResults == 0)
+            {
+                Console.WriteLine("No results found.");
+                return;
+            }
             for (int i = 0; i < numResults; i++)
             {
                 IntPtr fileNamePtr = EverythingApi.Everything_GetResultFileName(i);
@@ -33,15 +39,13 @@ namespace backendLogic.src.searchEngine
                     Console.WriteLine("Null pointer for filename or path.");
                     continue;
                 }
-                string fileName = fileNamePtr != IntPtr.Zero ? Marshal.PtrToStringAnsi(fileNamePtr) ?? string.Empty : string.Empty;
-                if (!fileName.Equals(searchString, StringComparison.OrdinalIgnoreCase))
-                    continue;
+              
                 _searchResults.Add(GetResult(i));
             }
         }
         public string GetFolderSize(string folderPath)
         {
-           Console.WriteLine($"Calculating size for folder: {folderPath}");
+            Console.WriteLine($"Calculating size for folder: {folderPath}");
             DirectoryInfo dirInfo = new DirectoryInfo(folderPath);
             string everythingSearchString = folderPath + "**";
             EverythingStatus statusCode = _everythingApi.search(everythingSearchString);
@@ -52,7 +56,7 @@ namespace backendLogic.src.searchEngine
             }
             int numResults = EverythingApi.Everything_GetNumResults();
             long totalSize = 0;
-            ulong fileSize = 0;
+            long fileSize = 0;
             for (int i = 0; i < numResults; i++)
             {
                 // Only sum sizes of files, not folders themselves
@@ -90,13 +94,14 @@ namespace backendLogic.src.searchEngine
         }
         private EverythingResult GetResult(int index)
         {
-            string fileName = EverythingApi.Everything_GetResultFileName(index) != IntPtr.Zero ? Marshal.PtrToStringAnsi(EverythingApi.Everything_GetResultFileName(index)) ?? string.Empty : string.Empty;
-            string pathName = EverythingApi.Everything_GetResultPath(index) != IntPtr.Zero ? Marshal.PtrToStringAnsi(EverythingApi.Everything_GetResultPath(index)) ?? string.Empty : string.Empty;
-            ulong size = 0;
-            long dateCreated = 0;
-            long dateModified = 0;
-            long dateAccessed = 0;
-            long dateRun = 0;
+
+            string fileName = EverythingApi.Everything_GetResultFileName(index) != IntPtr.Zero ? Marshal.PtrToStringUni(EverythingApi.Everything_GetResultFileName(index)) ?? string.Empty : string.Empty;
+            string pathName = EverythingApi.Everything_GetResultPath(index) != IntPtr.Zero ? Marshal.PtrToStringUni (EverythingApi.Everything_GetResultPath(index)) ?? string.Empty : string.Empty;
+            StringBuilder folderPath = new StringBuilder(1024);
+            // string pathName = EverythingApi.Everything_GetResultPathW(index, folderPath, folderPath.Capacity) ? folderPath.ToString() : string.Empty;
+            long size;
+            long dateCreated, dateModified, dateAccessed, dateRun;
+
             if (!EverythingApi.Everything_GetResultSize(index, out size))
             {
                 Console.WriteLine($"Failed to get size for index {index}: {EverythingApi.Everything_GetLastError()}");
@@ -126,7 +131,7 @@ namespace backendLogic.src.searchEngine
             {
                 FileName = fileName,
                 Path = pathName,
-                Size = size,
+                Size = FormatBytes(size),
                 pathSize = "0 Bytes", // Placeholder, can be updated later
                 DateCreated = DateTime.FromFileTimeUtc(dateCreated),
                 DateModified = DateTime.FromFileTimeUtc(dateModified),

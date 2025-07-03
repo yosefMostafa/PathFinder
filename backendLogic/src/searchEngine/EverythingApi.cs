@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using backendLogic.src.services.Everything;
+using System.Text;
 namespace backendLogic.src.searchEngine
 {
     public class EverythingApi
@@ -37,37 +38,42 @@ namespace backendLogic.src.searchEngine
         [DllImport("Everything64.dll")]
         public static extern void Everything_SetSort(uint dwSortType);
 
-        [DllImport("Everything64.dll")]
+        [DllImport("Everything64.dll", CharSet = CharSet.Unicode)]
         public static extern bool Everything_Query(bool bWait);
         [DllImport("Everything64.dll")]
-        public static extern bool Everything_IsFileResult( int nIndex);
+        public static extern bool Everything_IsFileResult(int nIndex);
 
         [DllImport("Everything64.dll")]
         public static extern int Everything_GetNumResults();
 
-        [DllImport("Everything64.dll")]
+        [DllImport("Everything64.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr Everything_GetResultFileName(int nIndex);
 
-        [DllImport("Everything64.dll")]
+        [DllImport("Everything64.dll", CharSet = CharSet.Unicode)]
+
         public static extern IntPtr Everything_GetResultPath(int nIndex);
 
         [DllImport("Everything64.dll")]
         public static extern int Everything_GetLastError();
         [DllImport("Everything64.dll")]
-        public static extern bool Everything_GetResultSize(int index,out ulong size);
+        public static extern bool Everything_GetResultSize(int index, out long size);
+        [DllImport("Everything64.dll", CharSet = CharSet.Unicode)]
+        public static extern bool Everything_GetResultPathW(int index, [Out] StringBuilder lpString, int maxCount);
+
         [DllImport("Everything64.dll")]
-        public static extern bool Everything_GetResultDateCreated(int index,out long dateCreated);
+        public static extern bool Everything_GetResultDateCreated(int index, out long dateCreated);
         [DllImport("Everything64.dll")]
-        public static extern bool Everything_GetResultDateModified(int index,out long dateModified);
+        public static extern bool Everything_GetResultDateModified(int index, out long dateModified);
         [DllImport("Everything64.dll")]
-        public static extern bool Everything_GetResultDateAccessed(int index,out long dateAccessed);
+        public static extern bool Everything_GetResultDateAccessed(int index, out long dateAccessed);
         [DllImport("Everything64.dll")]
         public static extern uint Everything_GetResultAttributes(int index);
         [DllImport("Everything64.dll")]
         public static extern uint Everything_GetResultRunCount(int index);
         [DllImport("Everything64.dll")]
-        public static extern bool Everything_GetResultDateRun(int index,out long dateRun);
-
+        public static extern bool Everything_GetResultDateRun(int index, out long dateRun);
+        // [DllImport("Everything64.dll")]
+        // public static extern void Everything_SetRegex(bool enabled);
         public async Task EnsureIntialized()
         {
             bool ready = false;
@@ -116,6 +122,7 @@ namespace backendLogic.src.searchEngine
 
         public EverythingStatus search(string searchString)
         {
+            // string searchTerm = "pdf";
             Everything_SetSearch(searchString); // 🔍 search term
             Everything_SetRequestFlags(
                 EVERYTHING_REQUEST_FILE_NAME |
