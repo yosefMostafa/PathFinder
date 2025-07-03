@@ -1,35 +1,37 @@
 
 
 using System.Threading.Tasks;
+using backendLogic.src.searchEngine.models;
+using System.Security.Principal;
+
 
 namespace backendLogic.src.searchEngine
 {
     public class Engine
     {
-        private string searchString = string.Empty;
-        private EverythingApi everythingApi = new EverythingApi();
-    public Engine()
-        {
-      }
 
-        public void SetSearchString(string search)
+        private EverythingRepo everythingRepo = new EverythingRepo();
+        public Engine()
         {
-            searchString = search;
         }
 
-        public string GetSearchString()
-        {
-            return searchString;
-        }
 
-        public async Task<HashSet<string>> StartSearch()
+        public async Task StartSearch(string search)
         {
-            await everythingApi.EnsureIntialized();
-            everythingApi.Main(); // 🔍 search term
-            // Logic to start the search using the searchString
-            Console.WriteLine($"Starting search for: {searchString}");
-            // Call to Everything API or other search logic would go here
-            return new HashSet<string>(); // Return results as a HashSet
+            await everythingRepo.SetSearch(search); // 🔍 search term
+
+        }
+        public List<EverythingResult> GetSearchResults()
+        {
+            return everythingRepo.GetSearchResults();
+        }
+        public string getFolderSize(string folderPath)
+        {
+            if (!folderPath.EndsWith("\\"))
+            {
+                folderPath = folderPath + "\\";
+            }
+            return everythingRepo.GetFolderSize(folderPath);
         }
 
     }

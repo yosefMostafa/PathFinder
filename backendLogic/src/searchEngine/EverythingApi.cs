@@ -39,6 +39,8 @@ namespace backendLogic.src.searchEngine
 
         [DllImport("Everything64.dll")]
         public static extern bool Everything_Query(bool bWait);
+        [DllImport("Everything64.dll")]
+        public static extern bool Everything_IsFileResult( int nIndex);
 
         [DllImport("Everything64.dll")]
         public static extern int Everything_GetNumResults();
@@ -51,13 +53,20 @@ namespace backendLogic.src.searchEngine
 
         [DllImport("Everything64.dll")]
         public static extern int Everything_GetLastError();
-        [DllImport("Everything64.dll")] public static extern long Everything_GetResultSize(int index);
-        [DllImport("Everything64.dll")] public static extern long Everything_GetResultDateCreated(int index);
-        [DllImport("Everything64.dll")] public static extern long Everything_GetResultDateModified(int index);
-        [DllImport("Everything64.dll")] public static extern long Everything_GetResultDateAccessed(int index);
-        [DllImport("Everything64.dll")] public static extern uint Everything_GetResultAttributes(int index);
-        [DllImport("Everything64.dll")] public static extern uint Everything_GetResultRunCount(int index);
-        [DllImport("Everything64.dll")] public static extern long Everything_GetResultDateRun(int index);
+        [DllImport("Everything64.dll")]
+        public static extern bool Everything_GetResultSize(int index,out ulong size);
+        [DllImport("Everything64.dll")]
+        public static extern bool Everything_GetResultDateCreated(int index,out long dateCreated);
+        [DllImport("Everything64.dll")]
+        public static extern bool Everything_GetResultDateModified(int index,out long dateModified);
+        [DllImport("Everything64.dll")]
+        public static extern bool Everything_GetResultDateAccessed(int index,out long dateAccessed);
+        [DllImport("Everything64.dll")]
+        public static extern uint Everything_GetResultAttributes(int index);
+        [DllImport("Everything64.dll")]
+        public static extern uint Everything_GetResultRunCount(int index);
+        [DllImport("Everything64.dll")]
+        public static extern bool Everything_GetResultDateRun(int index,out long dateRun);
 
         public async Task EnsureIntialized()
         {
@@ -71,7 +80,17 @@ namespace backendLogic.src.searchEngine
                 try
                 {
                     Everything_SetSearch("xxx");
-                    Everything_SetRequestFlags(EVERYTHING_REQUEST_FILE_NAME);
+                    Everything_SetRequestFlags(
+                        EVERYTHING_REQUEST_FILE_NAME |
+                        EVERYTHING_REQUEST_PATH |
+                        EVERYTHING_REQUEST_SIZE |
+                        EVERYTHING_REQUEST_DATE_CREATED |
+                        EVERYTHING_REQUEST_DATE_MODIFIED |
+                        EVERYTHING_REQUEST_DATE_ACCESSED |
+                        EVERYTHING_REQUEST_ATTRIBUTES |
+                        EVERYTHING_REQUEST_RUN_COUNT |
+                        EVERYTHING_REQUEST_DATE_RUN
+                    );
                     Everything_SetSort(EVERYTHING_SORT_NAME_ASCENDING);
 
                     if (Everything_Query(true))
@@ -95,9 +114,9 @@ namespace backendLogic.src.searchEngine
             }
         }
 
-        public void Main(string serachableString = "node_modules")
+        public EverythingStatus search(string searchString)
         {
-            Everything_SetSearch(serachableString); // 🔍 search term
+            Everything_SetSearch(searchString); // 🔍 search term
             Everything_SetRequestFlags(
                 EVERYTHING_REQUEST_FILE_NAME |
                 EVERYTHING_REQUEST_PATH |
@@ -114,74 +133,63 @@ namespace backendLogic.src.searchEngine
             if (!Everything_Query(true))
             {
 
-                everything_error_handler();
-                return;
+                return everything_error_handler();
+
             }
 
-            int numResults = Everything_GetNumResults();
-            var topLevelProjects = new HashSet<string>();
-            for (int i = 0; i < numResults; i++)
+            return new EverythingStatus
             {
-                IntPtr fileNamePtr = Everything_GetResultFileName(i);
-                IntPtr filePathPtr = Everything_GetResultPath(i);
-                if (fileNamePtr == IntPtr.Zero || filePathPtr == IntPtr.Zero)
-                {
-                    Console.WriteLine("Null pointer for filename or path.");
-                    continue;
-                }
-                string fileName = fileNamePtr != IntPtr.Zero ? Marshal.PtrToStringAnsi(fileNamePtr) ?? string.Empty : string.Empty;
-                string filePath = filePathPtr != IntPtr.Zero ? Marshal.PtrToStringAnsi(filePathPtr) ?? string.Empty : string.Empty;
-                string fullPath = System.IO.Path.Combine(filePath, fileName);
-                if (!fileName.Equals(serachableString, StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                // Ignore deeply nested node_modules
-                if (fullPath.Split(Path.DirectorySeparatorChar).Count(part => part == serachableString) > 1)
-                    continue;
-                var parentDirectory = Directory.GetParent(fullPath);
-                if (parentDirectory != null)
-                {
-                    string projectFolder = parentDirectory.FullName;
-                    if (!string.IsNullOrEmpty(projectFolder))
-                    {
-                        topLevelProjects.Add(projectFolder);
-                    }
-                }
-            }
-            Console.WriteLine("Top-level Node.js project folders:");
-            Console.WriteLine("Number of results: " + topLevelProjects.Count);
-            foreach (var folder in topLevelProjects)
-            {
-                Console.WriteLine(folder);
-            }
-
+                StatusMessage = "Search completed successfully.",
+                EverythingStatusCode = EverythingStatusCode.Success
+            };
         }
-        private void everything_error_handler()
+        private EverythingStatus everything_error_handler()
         {
             int errorCode = Everything_GetLastError();
             Console.WriteLine($"Error querying Everything. Error code: {errorCode}");
             switch (errorCode)
             {
                 case 1:
-                    Console.WriteLine("CreateProcess failed.");
-                    break;
+                    return new EverythingStatus
+                    {
+                        StatusMessage = "CreateProcess failed. Ensure Everything is installed and the path is correct.",
+                        EverythingStatusCode = EverythingStatusCode.Error
+                    };
+
                 case 2:
-                    Console.WriteLine("IPC failed — check if Everything is running.");
-                    break;
+                    return new EverythingStatus
+                    {
+                        StatusMessage = "IPC failed — check if Everything is running.",
+                        EverythingStatusCode = EverythingStatusCode.Error
+                    };
+
                 case 3:
-                    Console.WriteLine("Invalid index.");
-                    break;
+                    return new EverythingStatus
+                    {
+                        StatusMessage = "Invalid index.",
+                        EverythingStatusCode = EverythingStatusCode.Error
+                    };
+
                 case 4:
-                    Console.WriteLine("Invalid call order.");
-                    break;
+                    return new EverythingStatus
+                    {
+                        StatusMessage = "Invalid request flags.",
+                        EverythingStatusCode = EverythingStatusCode.Error
+                    };
                 case 5:
-                    Console.WriteLine("Query too large.");
-                    break;
+                    return new EverythingStatus
+                    {
+                        StatusMessage = "Invalid sort type.",
+                        EverythingStatusCode = EverythingStatusCode.Error
+                    };
                 default:
-                    Console.WriteLine("Unknown error.");
-                    break;
+                    return new EverythingStatus
+                    {
+                        StatusMessage = $"Unknown error occurred. Error code: {errorCode}",
+                        EverythingStatusCode = EverythingStatusCode.Error
+                    };
+
             }
-            return;
         }
     }
 

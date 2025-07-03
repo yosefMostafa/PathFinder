@@ -9,13 +9,14 @@ namespace backendLogic.src.services.Everything
         {
 
             string everythingPath = @".\everything.exe";
+            var iniFilePath = @".\Everything.ini";
 
             if (!Process.GetProcessesByName("Everything").Any())
             {
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = everythingPath,
-                    Arguments = "-startup",
+                    Arguments = $"-startup -config \"{iniFilePath}\"", // Example: Add a -config argument
                     CreateNoWindow = true,
                     Verb = "runas",
                     UseShellExecute = false,
@@ -40,5 +41,5 @@ namespace backendLogic.src.services.Everything
             }
         }
     }
-   
+
 }
