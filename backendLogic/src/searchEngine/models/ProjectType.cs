@@ -1,18 +1,20 @@
+using System.Runtime.InteropServices.Marshalling;
+
 namespace backendLogic.src.searchEngine.models
 {
 
     public abstract class ProjectType
     {
-        protected string _searchString;
-        protected Engine _engine;
+        protected string _searchString ;
+
         protected List<EverythingResult> _searchResults;
 
-        public ProjectType()
+        protected ProjectType(string searchString ,List<EverythingResult> searchResults)
         {
-            _searchString = string.Empty;
-            _engine = new Engine();
-            _searchResults = new List<EverythingResult>();
+            _searchString = searchString;
+            _searchResults = searchResults;
         }
+
         public void SetSearchResults(List<EverythingResult> results)
         {
             _searchResults = results;
@@ -23,10 +25,28 @@ namespace backendLogic.src.searchEngine.models
         }
         public List<EverythingResult> GetSearchResults()
         {
-            return new List<EverythingResult>(_searchResults);
+            List<EverythingResult> _temp = new List<EverythingResult>();
+            foreach (var result in _searchResults)
+            {
+                _temp.Add(result.Clone());
+            }
+            return  _temp;
         }
-        public abstract Task<List<EverythingResult>> RunSearch();
-       
+        public virtual bool RequirFolderSize()
+        {
+            return false;
+        }
+        public abstract void RunLogic();
+        public virtual void PrintResults()
+        {
+            Console.WriteLine($"Search completed. Found {_searchResults.Count} results.");
+            Console.WriteLine("-------------------");
+            foreach (var result in _searchResults)
+            {
+                result.Print();
+            }
+        }
+
 
     }
 }

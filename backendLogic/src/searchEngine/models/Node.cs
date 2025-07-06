@@ -5,16 +5,14 @@ namespace backendLogic.src.searchEngine.models
 
     public class Node : ProjectType
     {
-     
 
-        public Node()
+
+        public Node(): base("package.json", new List<EverythingResult>())
         {
-            _searchString = "package.json";
-            _engine = new Engine();
-            _searchResults = new List<EverythingResult>();
+          
         }
-       
-        public void FilterResults()
+
+        private void FilterResults()
         {
             List<EverythingResult> filteredResults = new List<EverythingResult>();
             for (int i = 0; i < _searchResults.Count; i++)
@@ -47,34 +45,19 @@ namespace backendLogic.src.searchEngine.models
             _searchResults = filteredResults;
         }
 
-
-        public override async Task<List<EverythingResult>> RunSearch()
+        public override bool RequirFolderSize()
         {
-            Console.WriteLine("Running search for: " + _searchString);
-            await _engine.StartSearch(_searchString);
-            _searchResults = _engine.GetSearchResults();
+            return true; // Node.js projects often require folder size calculations
+        }
+        public override void RunLogic()
+        {
             Console.WriteLine($"Search completed. Found {_searchResults.Count} results.");
             Console.WriteLine("Filtering results...");
             FilterResults();
             Console.WriteLine($"Filtered results. Remaining {_searchResults.Count} results.");
-            Console.WriteLine("Calculating folder sizes...");
-            for (int i = 0; i < _searchResults.Count; i++)
-            {
-                EverythingResult result = _searchResults[i];
-                result.pathSize = _engine.getFolderSize(result.Path ?? string.Empty);
-                _searchResults[i] = result;
-            }
-            Console.WriteLine("Folder sizes calculated.");
             Console.WriteLine("-------------------");
-
-            for (int i = 0; i < _searchResults.Count; i++)
-            {
-                _searchResults[i].Print();
-            }
-
-            return GetSearchResults();
         }
 
-       
+
     }
 }

@@ -39,6 +39,22 @@ namespace backendLogic.src.searchEngine
 
 
         }
+        public EverythingResult Clone()
+        {
+            return new EverythingResult
+            {
+                FileName = this.FileName,
+                Path = this.Path,
+                pathSize = this.pathSize,
+                Size = this.Size,
+                DateCreated = this.DateCreated,
+                DateModified = this.DateModified,
+                DateAccessed = this.DateAccessed,
+                Attributes = this.Attributes,
+                RunCount = this.RunCount,
+                DateRun = this.DateRun
+            };
+        }
     }
     public struct EverythingStatus
     {

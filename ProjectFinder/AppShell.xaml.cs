@@ -1,4 +1,4 @@
-﻿namespace ProjectFinder;
+namespace ProjectFinder;
 
 public partial class AppShell : Shell
 {
@@ -7,3 +7,4 @@ public partial class AppShell : Shell
 		InitializeComponent();
 	}
 }
+

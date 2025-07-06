@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace ProjectFinder;
 
@@ -22,3 +22,4 @@ public static class MauiProgram
 		return builder.Build();
 	}
 }
+
