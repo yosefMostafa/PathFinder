@@ -41,7 +41,7 @@ namespace backendLogic.src.searchEngine
                 for (int i = 0; i < _searchResults.Count; i++)
                 {
                     EverythingResult result = _searchResults[i];
-                    result.pathSize = getFolderSize(result.Path ?? string.Empty);
+                    result.PathSize = getFolderSize(result.ParentPath ?? string.Empty);
                     _searchResults[i] = result;
                 }
                 ProjectType.SetSearchResults(_searchResults.Select(result => result.Clone()).ToList());

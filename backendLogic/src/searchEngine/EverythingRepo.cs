@@ -130,9 +130,9 @@ namespace backendLogic.src.searchEngine
             return new EverythingResult
             {
                 FileName = fileName,
-                Path = pathName,
+                ParentPath = pathName,
                 Size = FormatBytes(size),
-                pathSize = "0 Bytes", // Placeholder, can be updated later
+                PathSize = "0 Bytes", // Placeholder, can be updated later
                 DateCreated = DateTime.FromFileTimeUtc(dateCreated),
                 DateModified = DateTime.FromFileTimeUtc(dateModified),
                 DateAccessed = DateTime.FromFileTimeUtc(dateAccessed),
