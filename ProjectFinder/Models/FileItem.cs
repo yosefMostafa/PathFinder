@@ -5,8 +5,12 @@ namespace ProjectFinder.Models
 {
     public class FileItem : INotifyPropertyChanged
     {
+        private string _filePath = string.Empty;
         private string _name = string.Empty;
-        private string _path = string.Empty;
+        private string _paretSize = string.Empty;
+        private string _parentType = string.Empty;
+        private string _parentIconPath = string.Empty;
+        private string _parentPath = string.Empty;
         private string _size = string.Empty;
         private string _dateCreated = string.Empty;
         private string _dateModified = string.Empty;
@@ -23,13 +27,49 @@ namespace ProjectFinder.Models
                 OnPropertyChanged();
             }
         }
-
-        public string Path
+        public string ParetSize 
         {
-            get => _path;
+            get => _paretSize;
             set
             {
-                _path = value;
+                _paretSize = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ParentPath
+        {
+            get => _parentPath;
+            set
+            {
+                _parentPath = value;
+                OnPropertyChanged();
+            }
+        }
+        public string ParentType
+        {
+            get => _parentType;
+            set
+            {
+                _parentType = value;
+                OnPropertyChanged();
+            }
+        }
+        public string ParentIconPath
+        {       
+            get => _parentIconPath;
+            set
+            {
+                _parentIconPath = value;
+                OnPropertyChanged();
+            }
+        }
+         public string FilePath
+        {
+            get => _filePath;
+            set
+            {
+                _filePath = value;
                 OnPropertyChanged();
             }
         }
@@ -111,7 +151,11 @@ namespace ProjectFinder.Models
             return new FileItem
             {
                 Name = result.FileName,
-                Path = result.Path,
+                ParentPath = result.ParentPath ?? string.Empty,
+                FilePath = result.FullPath,
+                ParetSize = result.PathSize,
+                ParentType = result.FolderType,
+                ParentIconPath = result.FolderIcon,
                 FullPath = result.FullPath,
                 Size = result.Size,
                 DateModified = result.DateModified?.ToString("M/d/yyyy h:mm tt") ?? string.Empty,

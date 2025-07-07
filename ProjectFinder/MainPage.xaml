@@ -4,231 +4,250 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              Title="ProjectFinder">
 
-    <ContentPage.ToolbarItems>
-        <!-- File Menu -->
-        <ToolbarItem Text="New"
-                Command="{Binding NewCommand}"/>
-        <ToolbarItem Text="Open"
-                Command="{Binding OpenCommand}"/>
-        <ToolbarItem Text="Exit"
-                Command="{Binding ExitCommand}"/>
+        <ContentPage.ToolbarItems>
+                <!-- File Menu -->
+                <ToolbarItem Text="New"
+                             Command="{Binding NewCommand}"/>
+                <ToolbarItem Text="Open"
+                             Command="{Binding OpenCommand}"/>
+                <ToolbarItem Text="Exit"
+                             Command="{Binding ExitCommand}"/>
 
-        <!-- Edit Menu -->
-        <ToolbarItem Text="Copy"
-                Command="{Binding CopyCommand}"/>
-        <ToolbarItem Text="Cut"
-                Command="{Binding CutCommand}"/>
-        <ToolbarItem Text="Paste"
-                Command="{Binding PasteCommand}"/>
-        <ToolbarItem Text="Select All"
-                Command="{Binding SelectAllCommand}"/>
+                <!-- Edit Menu -->
+                <ToolbarItem Text="Copy"
+                             Command="{Binding CopyCommand}"/>
+                <ToolbarItem Text="Cut"
+                             Command="{Binding CutCommand}"/>
+                <ToolbarItem Text="Paste"
+                             Command="{Binding PasteCommand}"/>
+                <ToolbarItem Text="Select All"
+                             Command="{Binding SelectAllCommand}"/>
 
-        <!-- View Menu -->
-        <ToolbarItem Text="Refresh"
-                Command="{Binding RefreshCommand}"/>
-        <ToolbarItem Text="Details"
-                Command="{Binding DetailsViewCommand}"/>
-        <ToolbarItem Text="List"
-                Command="{Binding ListViewCommand}"/>
+                <!-- View Menu -->
+                <ToolbarItem Text="Refresh"
+                             Command="{Binding RefreshCommand}"/>
+                <ToolbarItem Text="Details"
+                             Command="{Binding DetailsViewCommand}"/>
+                <ToolbarItem Text="List"
+                             Command="{Binding ListViewCommand}"/>
 
-        <!-- Search Menu -->
-        <ToolbarItem Text="Match Case"
-                Command="{Binding MatchCaseCommand}"/>
-        <ToolbarItem Text="Whole Word"
-                Command="{Binding MatchWholeWordCommand}"/>
-        <ToolbarItem Text="Regex"
-                Command="{Binding UseRegexCommand}"/>
+                <!-- Search Menu -->
+                <ToolbarItem Text="Match Case"
+                             Command="{Binding MatchCaseCommand}"/>
+                <ToolbarItem Text="Whole Word"
+                             Command="{Binding MatchWholeWordCommand}"/>
+                <ToolbarItem Text="Regex"
+                             Command="{Binding UseRegexCommand}"/>
 
-        <!-- Bookmarks -->
-        <ToolbarItem Text="Add Bookmark"
-                Command="{Binding AddBookmarkCommand}"/>
-        <ToolbarItem Text="Bookmarks"
-                Command="{Binding OrganizeBookmarksCommand}"/>
+                <!-- Bookmarks -->
+                <ToolbarItem Text="Add Bookmark"
+                             Command="{Binding AddBookmarkCommand}"/>
+                <ToolbarItem Text="Bookmarks"
+                             Command="{Binding OrganizeBookmarksCommand}"/>
 
-        <!-- Tools -->
-        <ToolbarItem Text="Options"
-                Command="{Binding OptionsCommand}"/>
+                <!-- Tools -->
+                <ToolbarItem Text="Options"
+                             Command="{Binding OptionsCommand}"/>
 
-        <!-- Help -->
-        <ToolbarItem Text="About"
-                Command="{Binding AboutCommand}"/>
-    </ContentPage.ToolbarItems>
+                <!-- Help -->
+                <ToolbarItem Text="About"
+                             Command="{Binding AboutCommand}"/>
+        </ContentPage.ToolbarItems>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <Grid>
+                <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-        <!-- Search Bar -->
-        <Grid Grid.Row="1"
-                Padding="5"
-                BackgroundColor="#F8F8F8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <Entry x:Name="SearchEntry"
-                   Grid.Column="0"
-                   Placeholder="Search for files and folders..."
-                   Text="{Binding SearchText}"
-                   FontSize="14"
-                   BackgroundColor="White"
-                   Margin="0,0,5,0"/>
-
-            <Picker x:Name="FilterPicker"
-                    Grid.Column="1"
-                    Title="Filter"
-                    SelectedItem="{Binding SelectedFilter}"
-                    BackgroundColor="White"
-                    WidthRequest="100">
-                <Picker.Items>
-                    <x:String>All</x:String>
-                    <x:String>Audio</x:String>
-                    <x:String>Video</x:String>
-                    <x:String>Images</x:String>
-                    <x:String>Documents</x:String>
-                    <x:String>REGEX</x:String>
-                </Picker.Items>
-            </Picker>
-        </Grid>
-
-        <!-- File List -->
-        <CollectionView x:Name="FileListView"
-                        Grid.Row="2"
-                        ItemsSource="{Binding Files}"
-                        BackgroundColor="White"
-                        SelectionMode="Multiple"
-                        SelectedItems="{Binding SelectedFiles}">
-            <CollectionView.Header>
-                <Grid BackgroundColor="#E0E0E0"
-                        HeightRequest="25">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="80"/>
-                        <ColumnDefinition Width="120"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Label Grid.Column="0"
-                            Text=""
-                            FontSize="12"
-                            VerticalOptions="Center"
-                           />
-                    <Label Grid.Column="1"
-                            Text="Name"
-                            FontSize="12"
-                            FontAttributes="Bold"
-                            VerticalOptions="Center"
-                            Padding="5,0"/>
-                    <Label Grid.Column="2"
-                            Text="Path"
-                            FontSize="12"
-                            FontAttributes="Bold"
-                            VerticalOptions="Center"
-                            Padding="5,0"/>
-                    <Label Grid.Column="3"
-                            Text="Size"
-                            FontSize="12"
-                            FontAttributes="Bold"
-                            VerticalOptions="Center"
-                            Padding="5,0"/>
-                    <Label Grid.Column="4"
-                            Text="Date Modified"
-                            FontSize="12"
-                            FontAttributes="Bold"
-                            VerticalOptions="Center"
-                            Padding="5,0"/>
-                </Grid>
-            </CollectionView.Header>
-
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid HeightRequest="20" 
-                           >
+                <!-- Search Bar -->
+                <Grid Grid.Row="1"
+                      Padding="5"
+                      BackgroundColor="#F8F8F8">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="200"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Image Grid.Column="0"
-                               Source="{Binding Icon}"
-                               WidthRequest="8"
-                               HeightRequest="8"
+                        <Entry x:Name="SearchEntry"
+                               Grid.Column="0"
+                               Placeholder="Search for files and folders..."
+                               Text="{Binding SearchText}"
+                               FontSize="14"
+                               BackgroundColor="White"
+                               Margin="0,0,5,0"/>
+
+                        <Picker x:Name="FilterPicker"
+                                Grid.Column="1"
+                                Title="Filter"
+                                SelectedItem="{Binding SelectedFilter}"
+                                BackgroundColor="White"
+                                WidthRequest="100">
+                                <Picker.Items>
+                                        <x:String>All</x:String>
+                                        <x:String>Audio</x:String>
+                                        <x:String>Video</x:String>
+                                        <x:String>Images</x:String>
+                                        <x:String>Documents</x:String>
+                                        <x:String>REGEX</x:String>
+                                </Picker.Items>
+                        </Picker>
+                </Grid>
+
+                <!-- File List -->
+                <CollectionView x:Name="FileListView"
+                                Grid.Row="2"
+                                ItemsSource="{Binding Files}"
+                                BackgroundColor="White"
+                                SelectionMode="None">
+                        <CollectionView.Header>
+                                <Grid BackgroundColor="#E0E0E0"
+                                      HeightRequest="25">
+                                        <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="200"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="120"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label
+                                                Grid.Column="0"
+                                                Text="Name"
+                                                FontSize="12"
+                                                FontAttributes="Bold"
+                                                VerticalOptions="Center"
+                                                Padding="5,0"/>
+                                        <Label
+                                                Grid.Column="1"
+                                                Text="Path"
+                                                FontSize="12"
+                                                FontAttributes="Bold"
+                                                VerticalOptions="Center"
+                                                Padding="5,0"/>
+                                        <Label
+                                                Grid.Column="2"
+                                                Text="Type"
+                                                FontSize="12"
+                                                FontAttributes="Bold"
+                                                VerticalOptions="Center"
+                                                Padding="5,0"/>
+                                        <Label
+                                                Grid.Column="3"
+                                                Text="Size"
+                                                FontSize="12"
+                                                FontAttributes="Bold"
+                                                VerticalOptions="Center"
+                                                Padding="5,0"/>
+                                        <Label
+                                                Grid.Column="4"
+                                                Text="Date Modified"
+                                                FontSize="12"
+                                                FontAttributes="Bold"
+                                                VerticalOptions="Center"
+                                                Padding="5,0"/>
+                                </Grid>
+                        </CollectionView.Header>
+
+                        <CollectionView.ItemTemplate>
+                                <DataTemplate>
+
+                                        <Grid HeightRequest="20"  Loaded="OnItemGridLoaded" >
+
+                                                <!-- <Grid.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding BindingContext.OnItemTapped, Source={x:Reference FileListView}}"
+                                                                              CommandParameter="{Binding}"/>
+                                                </Grid.GestureRecognizers> -->
+                                                <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="200"/>
+
+                                                        <ColumnDefinition Width="*"/>
+
+                                                        <ColumnDefinition Width="80"/>
+
+                                                        <ColumnDefinition Width="80"/>
+
+                                                        <ColumnDefinition Width="120"/>
+
+                                                </Grid.ColumnDefinitions>
+
+
+                                                <Label
+                                                        Grid.Column="0"
+                                                        Text="{Binding Name}"
+                                                        FontSize="12"
+                                                        TextColor="Black"
+                                                        VerticalOptions="Center"
+                                                        Padding="5,0"/>
+
+                                                <Label
+                                                        Grid.Column="1"
+                                                        Text="{Binding ParentPath}"
+                                                        FontSize="12"
+                                                        TextColor="Black"
+                                                        VerticalOptions="Center"
+                                                        Padding="5,0"/>
+                                                <Label
+                                                        Grid.Column="2"
+                                                        Text="{Binding ParentType}"
+                                                        FontSize="12"
+                                                        TextColor="Black"
+                                                        VerticalOptions="Center"
+                                                        Padding="5,0"/>
+                                                <Label
+                                                        Grid.Column="3"
+                                                        Text="{Binding Size}"
+                                                        FontSize="12"
+                                                        TextColor="Black"
+                                                        VerticalOptions="Center"
+                                                        Padding="5,0"/>
+
+                                                <Label
+                                                        Grid.Column="4"
+                                                        Text="{Binding DateModified}"
+                                                        FontSize="12"
+                                                        TextColor="Black"
+                                                        VerticalOptions="Center"
+                                                        Padding="5,0"/>
+                                        </Grid>
+                                </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Status Bar -->
+                <Grid Grid.Row="3"
+                      BackgroundColor="#F0F0F0"
+                      HeightRequest="25">
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Text="{Binding StatusText}"
+                               FontSize="12"
+                               TextColor="red"
                                VerticalOptions="Center"
-                               HorizontalOptions="Center"/>
+                               Padding="5,0"/>
 
                         <Label Grid.Column="1"
-                               Text="{Binding Name}"
+                               Text="REGEX"
                                FontSize="12"
-                               TextColor="Black"
                                VerticalOptions="Center"
-                               Padding="5,0"/>
+                               Padding="5,0"
+                               IsVisible="{Binding IsRegexEnabled}"/>
 
                         <Label Grid.Column="2"
-                               Text="{Binding Path}"
+                               Text="Audio"
                                FontSize="12"
-                               TextColor="Black"
                                VerticalOptions="Center"
-                               Padding="5,0"/>
-
-                        <Label Grid.Column="3"
-                               Text="{Binding Size}"
-                               FontSize="12"
-                               TextColor="Black"
-                               VerticalOptions="Center"
-                               Padding="5,0"/>
-
-                        <Label Grid.Column="4"
-                               Text="{Binding DateModified}"
-                               FontSize="12"
-                               TextColor="Black"
-                               VerticalOptions="Center"
-                               Padding="5,0"/>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-        <!-- Status Bar -->
-        <Grid Grid.Row="3"
-                BackgroundColor="#F0F0F0"
-                HeightRequest="25">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <Label Grid.Column="0"
-                   Text="{Binding StatusText}"
-                   FontSize="12"
-                   TextColor="red"
-                   VerticalOptions="Center"
-                   Padding="5,0"/>
-
-            <Label Grid.Column="1"
-                   Text="REGEX"
-                   FontSize="12"
-                   VerticalOptions="Center"
-                   Padding="5,0"
-                   IsVisible="{Binding IsRegexEnabled}"/>
-
-            <Label Grid.Column="2"
-                   Text="Audio"
-                   FontSize="12"
-                   VerticalOptions="Center"
-                   Padding="5,0"
-                   IsVisible="{Binding IsAudioFilterEnabled}"/>
+                               Padding="5,0"
+                               IsVisible="{Binding IsAudioFilterEnabled}"/>
+                </Grid>
         </Grid>
-    </Grid>
 
 </ContentPage>
 

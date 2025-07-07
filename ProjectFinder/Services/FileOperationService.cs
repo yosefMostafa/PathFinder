@@ -126,7 +126,7 @@ namespace ProjectFinder.Services
 
                 file.Name = newName;
                 file.FullPath = newPath;
-                file.Path = newPath;
+                file.FilePath = newPath;
 
                 return await Task.FromResult(true);
             }

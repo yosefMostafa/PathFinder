@@ -4,7 +4,11 @@ using System.Windows.Input;
 using ProjectFinder.Models;
 using ProjectFinder.Services;
 using ProjectFinder.Commands;
-
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Windows;
+using ProjectFinder.Services.Windows;
 namespace ProjectFinder
 {
     public class MainPageViewModel : INotifyPropertyChanged
@@ -131,6 +135,8 @@ namespace ProjectFinder
         public ICommand AboutCommand { get; private set; } = null!;
         public ICommand OpenFileCommand { get; private set; } = null!;
         public ICommand RenameCommand { get; private set; } = null!;
+        public ICommand RightClickCommand { get; private set; }
+
 
         private void InitializeCommands()
         {
@@ -154,6 +160,11 @@ namespace ProjectFinder
             AboutCommand = new RelayCommand(OnAbout);
             OpenFileCommand = new RelayCommand<FileItem>(OnOpenFile);
             RenameCommand = new RelayCommand(OnRename, () => SelectedFiles.Count == 1);
+            RightClickCommand = new RelayCommand<(FileItem, double, double)>(tuple =>
+            {
+                var (item, x, y) = tuple;
+                OnRightClick(item, x, y);
+            });
 
             // Subscribe to selection changes to update command states
             SelectedFiles.CollectionChanged += (s, e) => UpdateCommandStates();
@@ -168,8 +179,12 @@ namespace ProjectFinder
             ((RelayCommand)RenameCommand).RaiseCanExecuteChanged();
         }
         private bool _hasLoadedFiles = false;
-
-        private async void LoadInitialFiles()
+        private void OnRightClick(FileItem file, double x, double y)
+        {
+            Console.WriteLine($"Right-clicked on file: {file.FullPath} at ({x}, {y})");
+           ShellContextMenuHelper.Show(file.ParentPath, (int)x, (int)y);
+        }
+                private async void LoadInitialFiles()
         {
             if (_hasLoadedFiles) return;
             _hasLoadedFiles = true;

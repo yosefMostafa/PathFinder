@@ -11,13 +11,13 @@ namespace ProjectFinder.Services
 {
     public class FileService
     {
-        private readonly Engine _engine = new Engine(ProjectTypeEnum.PDF);
+        private readonly Engine _engine = new Engine(ProjectTypeEnum.Node);
         private readonly List<string> _audioExtensions = new() { ".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma", ".m4a" };
         private readonly List<string> _videoExtensions = new() { ".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv", ".webm" };
         private readonly List<string> _imageExtensions = new() { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".svg" };
         private readonly List<string> _documentExtensions = new() { ".pdf", ".doc", ".docx", ".txt", ".rtf", ".xls", ".xlsx", ".ppt", ".pptx" };
 
-        public async Task<List<FileItem>> GetFilesAsync(string? rootPath = null)
+        public async Task<List<FileItem>> GetFilesAsync(string? rootFilePath = null)
         {
             List<EverythingResult> results;
             try
@@ -61,19 +61,19 @@ namespace ProjectFinder.Services
                             try
                             {
                                 var regex = new Regex(searchTerm, RegexOptions.IgnoreCase);
-                                matchesSearch = regex.IsMatch(file.Name) || regex.IsMatch(file.Path);
+                                matchesSearch = regex.IsMatch(file.Name) || regex.IsMatch(file.FilePath);
                             }
                             catch
                             {
                                 // If regex is invalid, fall back to simple search
                                 matchesSearch = file.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                                              file.Path.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+                                              file.FilePath.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
                             }
                         }
                         else
                         {
                             matchesSearch = file.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                                          file.Path.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+                                          file.FilePath.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
                         }
 
                         // Apply type filter
@@ -106,13 +106,13 @@ namespace ProjectFinder.Services
             });
         }
 
-        private void ScanDirectory(string directoryPath, List<FileItem> files, int currentDepth = 0, int maxDepth = 3)
+        private void ScanDirectory(string directoryFilePath, List<FileItem> files, int currentDepth = 0, int maxDepth = 3)
         {
             if (currentDepth > maxDepth) return;
 
             try
             {
-                var directory = new DirectoryInfo(directoryPath);
+                var directory = new DirectoryInfo(directoryFilePath);
 
                 // Add directories
                 foreach (var dir in directory.GetDirectories().Take(100)) // Limit for performance
@@ -161,7 +161,7 @@ namespace ProjectFinder.Services
             return new FileItem
             {
                 Name = info.Name,
-                Path = info.FullName,
+                FilePath = info.FullName,
                 FullPath = info.FullName,
                 Size = size,
                 DateModified = info.LastWriteTime.ToString("M/d/yyyy h:mm tt"),
@@ -213,16 +213,16 @@ namespace ProjectFinder.Services
         {
             return new List<FileItem>
             {
-                new() { Name = "tempo.wav", Path = @"H:\work\Fun\necromancer", Size = "31 kB", DateModified = "7/1/2025 7:15 AM", Icon = "audio.png" },
-                new() { Name = "output.wav", Path = @"H:\work\Fun\necromancer", Size = "31 kB", DateModified = "7/1/2025 6:54 AM", Icon = "audio.png" },
-                new() { Name = "دوغ جع اصطخت.mp3", Path = @"H:\work\Fun\necromancer", Size = "214 kB", DateModified = "6/30/2025 1:35 PM", Icon = "audio.png" },
-                new() { Name = "Sheep laugh final.mp3", Path = @"H:\work\Fun\necromancer", Size = "49 kB", DateModified = "6/30/2025 1:35 PM", Icon = "audio.png" },
-                new() { Name = "another-one-dj-khaled.mp3", Path = @"H:\work\Fun\necromancer", Size = "35 kB", DateModified = "6/30/2025 1:35 PM", Icon = "audio.png" },
-                new() { Name = "tmpfw9l98z.wav", Path = @"C:\Users\user\AppData\Local\Temp", Size = "257 kB", DateModified = "6/30/2025 1:11 PM", Icon = "audio.png" },
-                new() { Name = "tmpzfh3rlok.wav", Path = @"C:\Users\user\AppData\Local\Temp", Size = "203 kB", DateModified = "6/30/2025 1:11 PM", Icon = "audio.png" },
-                new() { Name = "tmpfr2nm59f.wav", Path = @"C:\Users\user\AppData\Local\Temp", Size = "157 kB", DateModified = "6/30/2025 1:11 PM", Icon = "audio.png" },
-                new() { Name = "tmpduq8ncs.wav", Path = @"C:\Users\user\AppData\Local\Temp", Size = "313 kB", DateModified = "6/30/2025 1:11 PM", Icon = "audio.png" },
-                new() { Name = "tmpjh2ctbx.wav", Path = @"C:\Users\user\AppData\Local\Temp", Size = "605 kB", DateModified = "6/30/2025 1:11 PM", Icon = "audio.png" }
+                new() { Name = "tempo.wav", FilePath = @"H:\work\Fun\necromancer", Size = "31 kB", DateModified = "7/1/2025 7:15 AM", Icon = "audio.png" },
+                new() { Name = "output.wav", FilePath = @"H:\work\Fun\necromancer", Size = "31 kB", DateModified = "7/1/2025 6:54 AM", Icon = "audio.png" },
+                new() { Name = "دوغ جع اصطخت.mp3", FilePath = @"H:\work\Fun\necromancer", Size = "214 kB", DateModified = "6/30/2025 1:35 PM", Icon = "audio.png" },
+                new() { Name = "Sheep laugh final.mp3", FilePath = @"H:\work\Fun\necromancer", Size = "49 kB", DateModified = "6/30/2025 1:35 PM", Icon = "audio.png" },
+                new() { Name = "another-one-dj-khaled.mp3", FilePath = @"H:\work\Fun\necromancer", Size = "35 kB", DateModified = "6/30/2025 1:35 PM", Icon = "audio.png" },
+                new() { Name = "tmpfw9l98z.wav", FilePath = @"C:\Users\user\AppData\Local\Temp", Size = "257 kB", DateModified = "6/30/2025 1:11 PM", Icon = "audio.png" },
+                new() { Name = "tmpzfh3rlok.wav", FilePath = @"C:\Users\user\AppData\Local\Temp", Size = "203 kB", DateModified = "6/30/2025 1:11 PM", Icon = "audio.png" },
+                new() { Name = "tmpfr2nm59f.wav", FilePath = @"C:\Users\user\AppData\Local\Temp", Size = "157 kB", DateModified = "6/30/2025 1:11 PM", Icon = "audio.png" },
+                new() { Name = "tmpduq8ncs.wav", FilePath = @"C:\Users\user\AppData\Local\Temp", Size = "313 kB", DateModified = "6/30/2025 1:11 PM", Icon = "audio.png" },
+                new() { Name = "tmpjh2ctbx.wav", FilePath = @"C:\Users\user\AppData\Local\Temp", Size = "605 kB", DateModified = "6/30/2025 1:11 PM", Icon = "audio.png" }
             };
         }
 
@@ -231,7 +231,7 @@ namespace ProjectFinder.Services
             var sampleData = GetSampleData();
             return sampleData.Where(f =>
                 f.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                f.Path.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+                f.FilePath.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
             ).ToList();
         }
     }
