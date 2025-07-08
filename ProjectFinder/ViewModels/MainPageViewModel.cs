@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using ProjectFinder.Services.Windows;
+using ProjectFinder.Services.windows;
 namespace ProjectFinder
 {
     public class MainPageViewModel : INotifyPropertyChanged
@@ -23,6 +24,7 @@ namespace ProjectFinder
         private bool _isAudioFilterEnabled;
         private bool _matchCase;
         private bool _matchWholeWord;
+        private bool _isFullScreenTogglerVisible = false; // Assuming you want to control visibility of fullscreen toggler
 
         public MainPageViewModel()
         {
@@ -31,6 +33,14 @@ namespace ProjectFinder
             _bookmarkService = new BookmarkService();
             Files = new ObservableCollection<FileItem>();
             SelectedFiles = new ObservableCollection<object>();
+
+#if WINDOWS
+            var toggleItem = new ToolbarItem
+            {
+                Text = "Toggle Fullscreen",
+                Command = FullScreenToggler
+            };
+#endif
 
             InitializeCommands();
             LoadInitialFiles();
@@ -71,7 +81,15 @@ namespace ProjectFinder
                 OnPropertyChanged();
             }
         }
-
+        public bool IsFullScreenTogglerVisible
+        {
+            get => _isFullScreenTogglerVisible;
+            set
+            {
+                _isFullScreenTogglerVisible = value;
+                OnPropertyChanged();
+            }
+        }
         public bool IsRegexEnabled
         {
             get => _isRegexEnabled;
@@ -135,7 +153,8 @@ namespace ProjectFinder
         public ICommand AboutCommand { get; private set; } = null!;
         public ICommand OpenFileCommand { get; private set; } = null!;
         public ICommand RenameCommand { get; private set; } = null!;
-        public ICommand RightClickCommand { get; private set; }
+        public ICommand RightClickCommand { get; private set; } = null!;
+        public ICommand     FullScreenToggler { get; private set; } = null!;
 
 
         private void InitializeCommands()
@@ -160,6 +179,7 @@ namespace ProjectFinder
             AboutCommand = new RelayCommand(OnAbout);
             OpenFileCommand = new RelayCommand<FileItem>(OnOpenFile);
             RenameCommand = new RelayCommand(OnRename, () => SelectedFiles.Count == 1);
+            FullScreenToggler = new RelayCommand(ToggleFullScreen);
             RightClickCommand = new RelayCommand<(FileItem, double, double)>(tuple =>
             {
                 var (item, x, y) = tuple;
@@ -169,7 +189,12 @@ namespace ProjectFinder
             // Subscribe to selection changes to update command states
             SelectedFiles.CollectionChanged += (s, e) => UpdateCommandStates();
         }
-
+        private void ToggleFullScreen()
+        {
+#if WINDOWS
+            WindowsServicesHandler.ToggleFullScreen();
+#endif
+        }
         private void UpdateCommandStates()
         {
             ((RelayCommand)OpenCommand).RaiseCanExecuteChanged();
@@ -178,22 +203,23 @@ namespace ProjectFinder
             ((RelayCommand)DeleteCommand).RaiseCanExecuteChanged();
             ((RelayCommand)RenameCommand).RaiseCanExecuteChanged();
         }
-        private bool _hasLoadedFiles = false;
         private void OnRightClick(FileItem file, double x, double y)
         {
             Console.WriteLine($"Right-clicked on file: {file.FullPath} at ({x}, {y})");
-           ShellContextMenuHelper.Show(file.ParentPath, (int)x, (int)y);
+            WindowsServicesHandler.ShowMenuDelegate(file.ParentPath, x, y);
+
         }
-                private async void LoadInitialFiles()
+        private async void LoadInitialFiles()
         {
-            if (_hasLoadedFiles) return;
-            _hasLoadedFiles = true;
+
             try
             {
                 StatusText = "Loading files...";
-                var files = await _fileService.GetFilesAsync();
-
                 Files.Clear();
+                List<FileItem> files = await _fileService.GetFilesAsync();
+
+
+                Console.WriteLine($"Loaded {files.Count} files from service.");
                 foreach (var file in files)
                 {
                     Files.Add(file);
@@ -211,29 +237,30 @@ namespace ProjectFinder
 
         private async void PerformSearch()
         {
-            if (string.IsNullOrWhiteSpace(SearchText))
-            {
-                LoadInitialFiles();
-                return;
-            }
 
-            try
-            {
-                StatusText = "Searching...";
-                var searchResults = await _fileService.SearchFilesAsync(SearchText, SelectedFilter, IsRegexEnabled);
+            // if (string.IsNullOrWhiteSpace(SearchText))
+            // {
+            //     LoadInitialFiles();
+            //     return;
+            // }
 
-                Files.Clear();
-                foreach (var file in searchResults)
-                {
-                    Files.Add(file);
-                }
+            // try
+            // {
+            //     StatusText = "Searching...";
+            //     var searchResults = await _fileService.SearchFilesAsync(SearchText, SelectedFilter, IsRegexEnabled);
 
-                StatusText = $"{Files.Count:N0} objects";
-            }
-            catch (Exception ex)
-            {
-                StatusText = $"Search error: {ex.Message}";
-            }
+            //     Files.Clear();
+            //     foreach (var file in searchResults)
+            //     {
+            //         Files.Add(file);
+            //     }
+
+            //     StatusText = $"{Files.Count:N0} objects";
+            // }
+            // catch (Exception ex)
+            // {
+            //     StatusText = $"Search error: {ex.Message}";
+            // }
         }
 
         private void UpdateFilterStatus()
@@ -314,6 +341,8 @@ namespace ProjectFinder
         }
 
         private void OnRefresh() => LoadInitialFiles();
+
+
         private void OnDetailsView() => StatusText = "Details view selected";
         private void OnListView() => StatusText = "List view selected";
 

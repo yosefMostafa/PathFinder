@@ -17,6 +17,7 @@ namespace backendLogic.src.searchEngine
 
         public async Task SetSearch(string searchString)
         {
+            _searchResults.Clear();
             await _everythingApi.EnsureIntialized();
             EverythingStatus serachStatus = _everythingApi.search(searchString);
             if ((EverythingStatusCode)serachStatus.EverythingStatusCode != EverythingStatusCode.Success)

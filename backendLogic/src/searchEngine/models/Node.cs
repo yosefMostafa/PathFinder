@@ -76,27 +76,27 @@ namespace backendLogic.src.searchEngine.models
             if (dependencies.TryGetProperty("react", out _) || scripts.ToString().Contains("react-scripts"))
             {
                result.FolderType = "React";
-                result.FolderIcon = "./assets/react-icon.png"; // Example icon, replace with actual path
+                result.FolderIcon = "./Resources/Images/react_icon.png"; // Example icon, replace with actual path
             }
             else if (dependencies.TryGetProperty("@angular/core", out _))
             {
                 result.FolderType = "Angular";
-                result.FolderIcon = "./assets/angular-icon.png"; // Example icon, replace with actual path
+                result.FolderIcon = "./Resources/Images/angular_icon.png"; // Example icon, replace with actual path
             }
             else if (dependencies.TryGetProperty("vue", out _))
             {
                 result.FolderType = "Vue";
-                result.FolderIcon = "./assets/vue-icon.png"; // Example icon, replace with actual path
+                result.FolderIcon = "./Resources/Images/vue_icon.png"; // Example icon, replace with actual path
             }
             else if (dependencies.TryGetProperty("express", out _))
             {
                 result.FolderType = "Express";
-                result.FolderIcon = "./assetsreact-icon.png"; // Example icon, replace with actual path
+                result.FolderIcon = "./Resources/Images/react_icon.png"; // Example icon, replace with actual path
             }
             else if (dependencies.TryGetProperty("next", out _))
             {
                 result.FolderType = "Next.js";
-                result.FolderIcon = "./assets/nextjs-icon.png"; // Example icon, replace with actual
+                result.FolderIcon = "./Resources/Images/nextjs_icon.png"; // Example icon, replace with actual
 
             }
             else
@@ -108,7 +108,7 @@ namespace backendLogic.src.searchEngine.models
         }
         public override bool RequirFolderSize()
         {
-            return true; // Node.js projects often require folder size calculations
+            return false; // Node.js projects often require folder size calculations
         }
         public override void RunLogic()
         {

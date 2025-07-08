@@ -10,6 +10,7 @@ namespace ProjectFinder.Models
         private string _paretSize = string.Empty;
         private string _parentType = string.Empty;
         private string _parentIconPath = string.Empty;
+        private string _parentName = string.Empty;
         private string _parentPath = string.Empty;
         private string _size = string.Empty;
         private string _dateCreated = string.Empty;
@@ -27,7 +28,7 @@ namespace ProjectFinder.Models
                 OnPropertyChanged();
             }
         }
-        public string ParetSize 
+        public string ParetSize
         {
             get => _paretSize;
             set
@@ -56,7 +57,7 @@ namespace ProjectFinder.Models
             }
         }
         public string ParentIconPath
-        {       
+        {
             get => _parentIconPath;
             set
             {
@@ -64,7 +65,7 @@ namespace ProjectFinder.Models
                 OnPropertyChanged();
             }
         }
-         public string FilePath
+        public string FilePath
         {
             get => _filePath;
             set
@@ -83,7 +84,8 @@ namespace ProjectFinder.Models
                 OnPropertyChanged();
             }
         }
-        public string DateModified {
+        public string DateModified
+        {
             get => _dateModified;
             set
             {
@@ -91,8 +93,8 @@ namespace ProjectFinder.Models
                 OnPropertyChanged();
             }
         }
-        
-     
+
+
 
         public string DateCreated
         {
@@ -110,6 +112,15 @@ namespace ProjectFinder.Models
             set
             {
                 _icon = value;
+                OnPropertyChanged();
+            }
+        }
+        public string ParentName
+        {
+            get => _parentName;
+            set
+            {
+                _parentName = value;
                 OnPropertyChanged();
             }
         }
@@ -146,9 +157,10 @@ namespace ProjectFinder.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
         public static FileItem FromEverythingResult(EverythingResult result)
         {
-            return new FileItem
+           return new FileItem
             {
                 Name = result.FileName,
                 ParentPath = result.ParentPath ?? string.Empty,
@@ -158,8 +170,11 @@ namespace ProjectFinder.Models
                 ParentIconPath = result.FolderIcon,
                 FullPath = result.FullPath,
                 Size = result.Size,
+                ParentName = result.ParentPath?.Split("\\").LastOrDefault() ?? string.Empty,
                 DateModified = result.DateModified?.ToString("M/d/yyyy h:mm tt") ?? string.Empty,
-                Icon = result.FileName,
+                Icon = !string.IsNullOrEmpty(result.FolderIcon)
+                    ? result.FolderIcon.Split("/").LastOrDefault() ?? string.Empty
+                    : string.Empty,
                 DateCreated = result.DateCreated?.ToString("M/d/yyyy h:mm tt") ?? string.Empty,
             };
         }

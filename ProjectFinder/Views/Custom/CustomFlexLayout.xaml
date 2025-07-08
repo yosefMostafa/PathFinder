@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProjectFinder.Views.Custom.CustomFlexLayout"
+             BackgroundColor="Transparent"
+             >
+
+    <ScrollView  >
+        <FlexLayout
+            Direction="Row"
+            Wrap="Wrap"
+            JustifyContent="Start"
+            AlignItems="Start"
+            Padding="10"
+            BindableLayout.ItemsSource="{Binding Files}">
+
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <Frame
+                       
+                        Margin="5"
+                        Padding="8"
+                        WidthRequest="300"
+                        HasShadow="True"
+                        HeightRequest ="200"
+                        BorderColor="LightGray"
+                        CornerRadius="10"
+                        BackgroundColor="White">
+
+                        <VerticalStackLayout 
+                            VerticalOptions="Center"
+                             Loaded="OnItemFrameLoaded">
+                             <Label
+                                Text="{Binding ParentType, StringFormat='{}{0} project'}"
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                TextColor="Black"
+                                HorizontalOptions="Center"/>
+                            <Image
+                                Source="{Binding Icon}"
+                                HeightRequest="80"
+                                Aspect="AspectFit"/>
+                            <Label
+                                Text="{Binding ParentName}"
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                TextColor="Black"
+                                HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+
+                    </Frame>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+
+        </FlexLayout>
+    </ScrollView>
+</ContentView>

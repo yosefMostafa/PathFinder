@@ -2,252 +2,96 @@
 <ContentPage x:Class="ProjectFinder.MainPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:grid="clr-namespace:ProjectFinder.Views.Custom"
              Title="ProjectFinder">
 
-        <ContentPage.ToolbarItems>
-                <!-- File Menu -->
-                <ToolbarItem Text="New"
-                             Command="{Binding NewCommand}"/>
-                <ToolbarItem Text="Open"
-                             Command="{Binding OpenCommand}"/>
-                <ToolbarItem Text="Exit"
-                             Command="{Binding ExitCommand}"/>
+    <!-- Toolbar Menu Items -->
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="New"
+                     Command="{Binding NewCommand}"/>
+        <ToolbarItem Text="Open"
+                     Command="{Binding OpenCommand}"/>
+        <ToolbarItem Text="Exit"
+                     Command="{Binding ExitCommand}"/>
+        <ToolbarItem Text="Copy"
+                     Command="{Binding CopyCommand}"/>
+        <ToolbarItem Text="Cut"
+                     Command="{Binding CutCommand}"/>
+        <ToolbarItem Text="Paste"
+                     Command="{Binding PasteCommand}"/>
+        <ToolbarItem Text="Select All"
+                     Command="{Binding SelectAllCommand}"/>
+        <ToolbarItem Text="Refresh"
+                     Command="{Binding RefreshCommand}"/>
+        <!-- <ToolbarItem Text="Toggle Fullscreen"
+                     Command="{Binding FullScreenToggler}"
+                     IsVisible="{Binding IsFullScreenTogglerVisible}"/> -->
 
-                <!-- Edit Menu -->
-                <ToolbarItem Text="Copy"
-                             Command="{Binding CopyCommand}"/>
-                <ToolbarItem Text="Cut"
-                             Command="{Binding CutCommand}"/>
-                <ToolbarItem Text="Paste"
-                             Command="{Binding PasteCommand}"/>
-                <ToolbarItem Text="Select All"
-                             Command="{Binding SelectAllCommand}"/>
+        <ToolbarItem Text="List"
+                     Command="{Binding ListViewCommand}"/>
+        <ToolbarItem Text="Match Case"
+                     Command="{Binding MatchCaseCommand}"/>
+        <ToolbarItem Text="Whole Word"
+                     Command="{Binding MatchWholeWordCommand}"/>
+        <ToolbarItem Text="Regex"
+                     Command="{Binding UseRegexCommand}"/>
+        <ToolbarItem Text="Add Bookmark"
+                     Command="{Binding AddBookmarkCommand}"/>
+        <ToolbarItem Text="Bookmarks"
+                     Command="{Binding OrganizeBookmarksCommand}"/>
+        <ToolbarItem Text="Options"
+                     Command="{Binding OptionsCommand}"/>
+        <ToolbarItem Text="About"
+                     Command="{Binding AboutCommand}"/>
+    </ContentPage.ToolbarItems>
 
-                <!-- View Menu -->
-                <ToolbarItem Text="Refresh"
-                             Command="{Binding RefreshCommand}"/>
-                <ToolbarItem Text="Details"
-                             Command="{Binding DetailsViewCommand}"/>
-                <ToolbarItem Text="List"
-                             Command="{Binding ListViewCommand}"/>
+    <!-- Page Layout -->
 
-                <!-- Search Menu -->
-                <ToolbarItem Text="Match Case"
-                             Command="{Binding MatchCaseCommand}"/>
-                <ToolbarItem Text="Whole Word"
-                             Command="{Binding MatchWholeWordCommand}"/>
-                <ToolbarItem Text="Regex"
-                             Command="{Binding UseRegexCommand}"/>
+    <!-- Page Layout -->
+    <Grid BackgroundColor="#68FFFFFF">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <!-- Main content -->
+            <RowDefinition Height="Auto"/>
+            <!-- Status bar -->
+        </Grid.RowDefinitions>
 
-                <!-- Bookmarks -->
-                <ToolbarItem Text="Add Bookmark"
-                             Command="{Binding AddBookmarkCommand}"/>
-                <ToolbarItem Text="Bookmarks"
-                             Command="{Binding OrganizeBookmarksCommand}"/>
+        <!-- Card Layout (Main Content) -->
+       
+            <grid:CustomFlexLayout Grid.Row="0"/>
+ 
 
-                <!-- Tools -->
-                <ToolbarItem Text="Options"
-                             Command="{Binding OptionsCommand}"/>
+        <!-- Status Bar -->
+        <Grid Grid.Row="1"
+              BackgroundColor="#F0F0F0"
+              HeightRequest="25">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-                <!-- Help -->
-                <ToolbarItem Text="About"
-                             Command="{Binding AboutCommand}"/>
-        </ContentPage.ToolbarItems>
+            <Label Grid.Column="0"
+                   Text="{Binding StatusText}"
+                   FontSize="12"
+                   TextColor="Red"
+                   VerticalOptions="Center"
+                   Padding="5,0"/>
 
-        <Grid>
-                <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <Label Grid.Column="1"
+                   Text="REGEX"
+                   FontSize="12"
+                   VerticalOptions="Center"
+                   Padding="5,0"
+                   IsVisible="{Binding IsRegexEnabled}"/>
 
-                <!-- Search Bar -->
-                <Grid Grid.Row="1"
-                      Padding="5"
-                      BackgroundColor="#F8F8F8">
-                        <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Entry x:Name="SearchEntry"
-                               Grid.Column="0"
-                               Placeholder="Search for files and folders..."
-                               Text="{Binding SearchText}"
-                               FontSize="14"
-                               BackgroundColor="White"
-                               Margin="0,0,5,0"/>
-
-                        <Picker x:Name="FilterPicker"
-                                Grid.Column="1"
-                                Title="Filter"
-                                SelectedItem="{Binding SelectedFilter}"
-                                BackgroundColor="White"
-                                WidthRequest="100">
-                                <Picker.Items>
-                                        <x:String>All</x:String>
-                                        <x:String>Audio</x:String>
-                                        <x:String>Video</x:String>
-                                        <x:String>Images</x:String>
-                                        <x:String>Documents</x:String>
-                                        <x:String>REGEX</x:String>
-                                </Picker.Items>
-                        </Picker>
-                </Grid>
-
-                <!-- File List -->
-                <CollectionView x:Name="FileListView"
-                                Grid.Row="2"
-                                ItemsSource="{Binding Files}"
-                                BackgroundColor="White"
-                                SelectionMode="None">
-                        <CollectionView.Header>
-                                <Grid BackgroundColor="#E0E0E0"
-                                      HeightRequest="25">
-                                        <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="200"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="80"/>
-                                                <ColumnDefinition Width="80"/>
-                                                <ColumnDefinition Width="120"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Label
-                                                Grid.Column="0"
-                                                Text="Name"
-                                                FontSize="12"
-                                                FontAttributes="Bold"
-                                                VerticalOptions="Center"
-                                                Padding="5,0"/>
-                                        <Label
-                                                Grid.Column="1"
-                                                Text="Path"
-                                                FontSize="12"
-                                                FontAttributes="Bold"
-                                                VerticalOptions="Center"
-                                                Padding="5,0"/>
-                                        <Label
-                                                Grid.Column="2"
-                                                Text="Type"
-                                                FontSize="12"
-                                                FontAttributes="Bold"
-                                                VerticalOptions="Center"
-                                                Padding="5,0"/>
-                                        <Label
-                                                Grid.Column="3"
-                                                Text="Size"
-                                                FontSize="12"
-                                                FontAttributes="Bold"
-                                                VerticalOptions="Center"
-                                                Padding="5,0"/>
-                                        <Label
-                                                Grid.Column="4"
-                                                Text="Date Modified"
-                                                FontSize="12"
-                                                FontAttributes="Bold"
-                                                VerticalOptions="Center"
-                                                Padding="5,0"/>
-                                </Grid>
-                        </CollectionView.Header>
-
-                        <CollectionView.ItemTemplate>
-                                <DataTemplate>
-
-                                        <Grid HeightRequest="20"  Loaded="OnItemGridLoaded" >
-
-                                                <!-- <Grid.GestureRecognizers>
-                                                        <TapGestureRecognizer Command="{Binding BindingContext.OnItemTapped, Source={x:Reference FileListView}}"
-                                                                              CommandParameter="{Binding}"/>
-                                                </Grid.GestureRecognizers> -->
-                                                <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="200"/>
-
-                                                        <ColumnDefinition Width="*"/>
-
-                                                        <ColumnDefinition Width="80"/>
-
-                                                        <ColumnDefinition Width="80"/>
-
-                                                        <ColumnDefinition Width="120"/>
-
-                                                </Grid.ColumnDefinitions>
-
-
-                                                <Label
-                                                        Grid.Column="0"
-                                                        Text="{Binding Name}"
-                                                        FontSize="12"
-                                                        TextColor="Black"
-                                                        VerticalOptions="Center"
-                                                        Padding="5,0"/>
-
-                                                <Label
-                                                        Grid.Column="1"
-                                                        Text="{Binding ParentPath}"
-                                                        FontSize="12"
-                                                        TextColor="Black"
-                                                        VerticalOptions="Center"
-                                                        Padding="5,0"/>
-                                                <Label
-                                                        Grid.Column="2"
-                                                        Text="{Binding ParentType}"
-                                                        FontSize="12"
-                                                        TextColor="Black"
-                                                        VerticalOptions="Center"
-                                                        Padding="5,0"/>
-                                                <Label
-                                                        Grid.Column="3"
-                                                        Text="{Binding Size}"
-                                                        FontSize="12"
-                                                        TextColor="Black"
-                                                        VerticalOptions="Center"
-                                                        Padding="5,0"/>
-
-                                                <Label
-                                                        Grid.Column="4"
-                                                        Text="{Binding DateModified}"
-                                                        FontSize="12"
-                                                        TextColor="Black"
-                                                        VerticalOptions="Center"
-                                                        Padding="5,0"/>
-                                        </Grid>
-                                </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                </CollectionView>
-
-                <!-- Status Bar -->
-                <Grid Grid.Row="3"
-                      BackgroundColor="#F0F0F0"
-                      HeightRequest="25">
-                        <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Label Grid.Column="0"
-                               Text="{Binding StatusText}"
-                               FontSize="12"
-                               TextColor="red"
-                               VerticalOptions="Center"
-                               Padding="5,0"/>
-
-                        <Label Grid.Column="1"
-                               Text="REGEX"
-                               FontSize="12"
-                               VerticalOptions="Center"
-                               Padding="5,0"
-                               IsVisible="{Binding IsRegexEnabled}"/>
-
-                        <Label Grid.Column="2"
-                               Text="Audio"
-                               FontSize="12"
-                               VerticalOptions="Center"
-                               Padding="5,0"
-                               IsVisible="{Binding IsAudioFilterEnabled}"/>
-                </Grid>
+            <Label Grid.Column="2"
+                   Text="Audio"
+                   FontSize="12"
+                   VerticalOptions="Center"
+                   Padding="5,0"
+                   IsVisible="{Binding IsAudioFilterEnabled}"/>
         </Grid>
+    </Grid>
 
 </ContentPage>
-

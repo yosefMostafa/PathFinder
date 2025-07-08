@@ -7,16 +7,34 @@ using ProjectFinder.Models;
 
 public partial class MainPage : ContentPage
 {
+
+
 	public MainPage()
 	{
 		InitializeComponent();
-		
-		BindingContext = new MainPageViewModel();
+		var viewModel = new MainPageViewModel();
+		BindingContext = viewModel;
+		AddFullscreenTogglerToWin(viewModel);
 
+	}
+	private void AddFullscreenTogglerToWin(MainPageViewModel viewModel)
+	{
+#if WINDOWS
+		ToolbarItem toggleItem = new ToolbarItem
+		{
+			Text = "Toggle Fullscreen",
+			Command = viewModel.FullScreenToggler,
+			Order = ToolbarItemOrder.Primary,
+			// Priority = 0
+		};
+		ToolbarItems.Add(toggleItem);
+
+#endif
 	}
 
 	private void OnItemGridLoaded(object sender, EventArgs e)
 	{
+		Console.WriteLine("OnItemGridLoaded called");
 #if WINDOWS
 		if (sender is Grid grid && grid.BindingContext is FileItem fileItem)
 		{
@@ -27,6 +45,7 @@ public partial class MainPage : ContentPage
 			{
 				nativeView.PointerPressed += (s, args) =>
 				{
+
 					var point = args.GetCurrentPoint(nativeView);
 					if (args.GetCurrentPoint(nativeView).Properties.IsRightButtonPressed)
 					{

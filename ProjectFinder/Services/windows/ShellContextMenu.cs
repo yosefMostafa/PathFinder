@@ -1,32 +1,30 @@
 #if WINDOWS
-using Microsoft.Maui.Platform;
-using System;
-using System.IO;
+
 using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.UI.Xaml;
+
 
 namespace ProjectFinder.Services.Windows
 {
-    static class ShellContextMenuHelper
+    public class ShellContextMenuHelper
     {
         private const uint CMF_NORMAL = 0x00000000;
         private const uint TPM_LEFTALIGN = 0x0000;
         private const uint TPM_RIGHTBUTTON = 0x0002;
 
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-        public static extern int SHParseDisplayName(string name, IntPtr pbc, out IntPtr ppidl, uint sfgaoIn, out uint psfgaoOut);
+        protected static extern int SHParseDisplayName(string name, IntPtr pbc, out IntPtr ppidl, uint sfgaoIn, out uint psfgaoOut);
 
         [DllImport("shell32.dll")]
-        public static extern int SHBindToParent(IntPtr pidl, ref Guid riid, out IntPtr ppv, out IntPtr ppidlLast);
+        protected static extern int SHBindToParent(IntPtr pidl, ref Guid riid, out IntPtr ppv, out IntPtr ppidlLast);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr CreatePopupMenu();
+        protected static extern IntPtr CreatePopupMenu();
 
         [DllImport("user32.dll")]
-        public static extern bool DestroyMenu(IntPtr hMenu);
+        protected static extern bool DestroyMenu(IntPtr hMenu);
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern uint TrackPopupMenuEx(
+        protected static extern uint TrackPopupMenuEx(
             IntPtr hMenu,
             uint uFlags,
             int x,
@@ -37,7 +35,7 @@ namespace ProjectFinder.Services.Windows
         // COM Interfaces
         [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         [Guid("000214e4-0000-0000-c000-000000000046")]
-        public interface IContextMenu
+        protected interface IContextMenu
         {
             [PreserveSig]
             int QueryContextMenu(IntPtr hmenu, uint indexMenu, uint idCmdFirst, uint idCmdLast, uint uFlags);
@@ -48,13 +46,13 @@ namespace ProjectFinder.Services.Windows
         }
 
         [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("000214F4-0000-0000-C000-000000000046")]
-        public interface IContextMenu2 : IContextMenu
+        protected interface IContextMenu2 : IContextMenu
         {
             [PreserveSig]
             int HandleMenuMsg(uint uMsg, IntPtr wParam, IntPtr lParam);
         }
         [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("BCFCE0A0-EC17-11d0-8D10-00A0C90F2719")]
-        public interface IContextMenu3 : IContextMenu2
+        protected interface IContextMenu3 : IContextMenu2
         {
             [PreserveSig]
             int QueryContextMenu(IntPtr hMenu, uint indexMenu, int idCmdFirst, int idCmdLast, uint uFlags);
@@ -73,7 +71,7 @@ namespace ProjectFinder.Services.Windows
 
         // Struct definition
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        public struct CMINVOKECOMMANDINFOEX
+        protected struct CMINVOKECOMMANDINFOEX
         {
             public int cbSize;
             public int fMask;
@@ -93,21 +91,21 @@ namespace ProjectFinder.Services.Windows
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct POINT
+        protected struct POINT
         {
             public int x;
             public int y;
         }
         [DllImport("user32.dll")]
-        public static extern IntPtr GetForegroundWindow();
+        protected static extern IntPtr GetForegroundWindow();
 
-        private static IntPtr MAKEINTRESOURCE(int i)
+        protected static IntPtr MAKEINTRESOURCE(int i)
         {
             return (IntPtr)(i & 0xFFFF);
         }
 
         // P/Invoke
-        private static IntPtr SubclassProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
+        protected static IntPtr SubclassProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
         {
             if (dwRefData != IntPtr.Zero)
             {
@@ -121,17 +119,17 @@ namespace ProjectFinder.Services.Windows
             return DefSubclassProc(hWnd, msg, wParam, lParam);
         }
         [DllImport("comctl32.dll")]
-        public static extern IntPtr DefSubclassProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+        protected static extern IntPtr DefSubclassProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("comctl32.dll", SetLastError = true)]
-        public static extern bool SetWindowSubclass(
+        protected static extern bool SetWindowSubclass(
      IntPtr hWnd,
      SUBCLASSPROC pfnSubclass,
      IntPtr uIdSubclass,
      IntPtr dwRefData
  );
 
-        public delegate IntPtr SUBCLASSPROC(
+        protected delegate IntPtr SUBCLASSPROC(
             IntPtr hWnd,
             uint msg,
             IntPtr wParam,
@@ -141,7 +139,7 @@ namespace ProjectFinder.Services.Windows
         );
 
         // Main entry
-        public static void Show(string filePath, int screenX, int screenY)
+        protected static void Show(string filePath, int screenX, int screenY)
         {
             if (!OperatingSystem.IsWindows() || (!File.Exists(filePath) && !Directory.Exists(filePath)))
                 return;
@@ -239,8 +237,22 @@ namespace ProjectFinder.Services.Windows
                 if (pidl != IntPtr.Zero) Marshal.FreeCoTaskMem(pidl);
             }
         }
+
+        protected static Microsoft.UI.Windowing.AppWindow GetAppWindow(MauiWinUIWindow window)
+        {
+            var handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
+            var id = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(handle);
+            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(id);
+            return appWindow;
+        }
+        protected static MauiWinUIWindow? GetParentWindow()
+        {
+            var mauiWindow = Microsoft.Maui.Controls.Application.Current?.Windows.FirstOrDefault();
+            return mauiWindow?.Handler?.PlatformView as MauiWinUIWindow;
+        }
+
         [StructLayout(LayoutKind.Sequential)]
-        public struct WINDOWPLACEMENT
+        protected struct WINDOWPLACEMENT
         {
             public int length;
             public int flags;
