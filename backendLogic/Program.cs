@@ -7,7 +7,7 @@ using backendLogic.src.searchEngine.models;
 Console.WriteLine("🚀 PathFinder - Everything SDK Metadata Test");
 Console.WriteLine("=" + new string('=', 50));
 
-Engine engine = new Engine(ProjectTypeEnum.Node);
+Engine engine = new Engine(ProjectTypeEnum.FlutterProjects);
 await engine.Run();
  
 // string name = typeof(Program).Namespace ?? "None!";

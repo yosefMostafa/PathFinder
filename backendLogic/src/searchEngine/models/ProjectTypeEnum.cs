@@ -5,6 +5,7 @@ public enum ProjectTypeEnum
     Node,
     PDF,
     JavaScript,
+    FlutterProjects,
     Python,
     CSharp,
     Java,

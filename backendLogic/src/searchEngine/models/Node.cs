@@ -25,8 +25,8 @@ namespace backendLogic.src.searchEngine.models
                 if (fullPath.Contains("node_modules"))
                     continue;
                 //remove any path that is in c/user's or c/programfiles /c/program files (x86) or c/windows
-                if (fullPath.StartsWith("C:\\Users") || fullPath.StartsWith("C:\\Program Files") || fullPath.StartsWith("C:\\Program Files (x86)") || fullPath.StartsWith("C:\\Windows"))
-                    continue;
+                // if (fullPath.StartsWith("C:\\Users") || fullPath.StartsWith("C:\\Program Files") || fullPath.StartsWith("C:\\Program Files (x86)") || fullPath.StartsWith("C:\\Windows"))
+                //     continue;
                 var parentDirectory = Directory.GetParent(fullPath);
                 if (parentDirectory == null)
                     continue;
@@ -73,11 +73,16 @@ namespace backendLogic.src.searchEngine.models
             {
                 return false;
             }
-            if (dependencies.TryGetProperty("react", out _) || scripts.ToString().Contains("react-scripts"))
+            if (dependencies.TryGetProperty("react-native", out _) || scripts.ToString().Contains("react-native"))
             {
-               result.FolderType = "React";
+               result.FolderType = "React Native";
+                result.FolderIcon = "./Resources/Images/react_icon.png"; // Example icon, replace with actual path
+            }else if (dependencies.TryGetProperty("react", out _) || scripts.ToString().Contains("react-scripts"))
+            {
+                result.FolderType = "React";
                 result.FolderIcon = "./Resources/Images/react_icon.png"; // Example icon, replace with actual path
             }
+
             else if (dependencies.TryGetProperty("@angular/core", out _))
             {
                 result.FolderType = "Angular";

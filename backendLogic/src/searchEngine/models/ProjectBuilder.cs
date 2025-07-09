@@ -21,6 +21,8 @@ public class ProjectBuilder
                 return new Node();
             case ProjectTypeEnum.PDF:
                 return new PDF();
+            case ProjectTypeEnum.FlutterProjects:
+                return new FlutterProjects();
             default:
                 throw new NotImplementedException($"Project type {ProjectType} is not implemented.");
         }
