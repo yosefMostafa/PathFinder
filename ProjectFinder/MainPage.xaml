@@ -3,66 +3,92 @@
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:grid="clr-namespace:ProjectFinder.Views.Custom"
-             Title="ProjectFinder">
+             Title="ProjectFinder"
+             xmlns:models="clr-namespace:ProjectFinder.Models"
+             xmlns:viewmodels="clr-namespace:ProjectFinder"
+             x:DataType="viewmodels:MainPageViewModel">
+    <ContentPage.MenuBarItems>
+        <MenuBarItem Text="File">
+            <MenuFlyoutItem Text="Exit"/>
+        </MenuBarItem>
+        <MenuBarItem Text="Projects">
+            <MenuFlyoutSubItem Text="Change Project">
+                <MenuFlyoutItem Text="Node"
+                                Command="{Binding ChangeProjectCommand}"
+                                CommandParameter="Node"/>
+                <MenuFlyoutItem Text="Flutter"
+                                Command="{Binding ChangeProjectCommand}"
+                                CommandParameter="Flutter"/>
+                <MenuFlyoutItem Text="PDf"
+                                Command="{Binding ChangeProjectCommand}"
+                                CommandParameter="PDF"/>
+            </MenuFlyoutSubItem>
+            <MenuFlyoutSeparator/>
+            <MenuFlyoutItem Text="Add Location"/>
+            <MenuFlyoutItem Text="Edit Location"/>
+            <MenuFlyoutItem Text="Remove Location"/>
+        </MenuBarItem>
+        <MenuBarItem Text="View">
+            <MenuFlyoutItem Text="Refresh"
+                            Command="{Binding RefreshCommand}"/>
+            <MenuFlyoutItem Text="Change Theme"/>
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
 
     <!-- Toolbar Menu Items -->
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="New"
-                     Command="{Binding NewCommand}"/>
-        <ToolbarItem Text="Open"
-                     Command="{Binding OpenCommand}"/>
-        <ToolbarItem Text="Exit"
-                     Command="{Binding ExitCommand}"/>
-        <ToolbarItem Text="Copy"
-                     Command="{Binding CopyCommand}"/>
-        <ToolbarItem Text="Cut"
-                     Command="{Binding CutCommand}"/>
-        <ToolbarItem Text="Paste"
-                     Command="{Binding PasteCommand}"/>
-        <ToolbarItem Text="Select All"
-                     Command="{Binding SelectAllCommand}"/>
-        <ToolbarItem Text="Refresh"
-                     Command="{Binding RefreshCommand}"/>
-        <!-- <ToolbarItem Text="Toggle Fullscreen"
-                     Command="{Binding FullScreenToggler}"
-                     IsVisible="{Binding IsFullScreenTogglerVisible}"/> -->
-
-        <ToolbarItem Text="List"
-                     Command="{Binding ListViewCommand}"/>
-        <ToolbarItem Text="Match Case"
-                     Command="{Binding MatchCaseCommand}"/>
-        <ToolbarItem Text="Whole Word"
-                     Command="{Binding MatchWholeWordCommand}"/>
-        <ToolbarItem Text="Regex"
-                     Command="{Binding UseRegexCommand}"/>
-        <ToolbarItem Text="Add Bookmark"
-                     Command="{Binding AddBookmarkCommand}"/>
-        <ToolbarItem Text="Bookmarks"
-                     Command="{Binding OrganizeBookmarksCommand}"/>
-        <ToolbarItem Text="Options"
-                     Command="{Binding OptionsCommand}"/>
-        <ToolbarItem Text="About"
-                     Command="{Binding AboutCommand}"/>
-    </ContentPage.ToolbarItems>
-
+    
     <!-- Page Layout -->
 
     <!-- Page Layout -->
     <Grid BackgroundColor="#68FFFFFF">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <!-- Main content -->
             <RowDefinition Height="Auto"/>
             <!-- Status bar -->
         </Grid.RowDefinitions>
+        <!-- <CollectionView ItemsSource="{Binding ProjectTypes}"
+                        SelectionMode="Single"
+                        ItemsLayout="HorizontalList"
+                        SelectionChanged="OnProjectSelected">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="70"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.RowSpan="2"
+                               Text="{Binding Name}"
+                               HeightRequest="60"
+                               WidthRequest="60"/>
 
+
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView> -->
         <!-- Card Layout (Main Content) -->
-       
-            <grid:CustomFlexLayout Grid.Row="0"/>
- 
+        <Grid Grid.Row="1"
+              BackgroundColor="#FFFFFF"
+              Padding="10,10,10,0">
+            <ActivityIndicator
+                IsRunning="{Binding IsGettingData}"
+                IsVisible="{Binding IsGettingData}"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Color="Blue"/>
+        </Grid>
+        <grid:CustomFlexLayout Grid.Row="1" 
+            FilesData="{Binding Files}"
+            />
+
 
         <!-- Status Bar -->
-        <Grid Grid.Row="1"
+        <Grid Grid.Row="2"
               BackgroundColor="#F0F0F0"
               HeightRequest="25">
             <Grid.ColumnDefinitions>

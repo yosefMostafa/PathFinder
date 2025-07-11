@@ -137,6 +137,30 @@ namespace ProjectFinder.Services.Windows
             IntPtr uIdSubclass,
             IntPtr dwRefData
         );
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetFocus();
+
+        [DllImport("user32.dll")]
+        private static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        protected static void CloseContextMenu()
+        {
+            // Get the focused window, which should be the menu's owner
+            IntPtr hWnd = GetFocus();
+
+            if (hWnd != IntPtr.Zero)
+            {
+
+                PostMessage(hWnd, 0x001F, IntPtr.Zero, IntPtr.Zero);
+                Console.WriteLine("WM_CANCELMODE sent to close context menu.");
+            }
+            else
+            {
+                Console.WriteLine("No focused window to send cancel.");
+            }
+        }
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         // Main entry
         protected static void Show(string filePath, int screenX, int screenY)
@@ -200,7 +224,7 @@ namespace ProjectFinder.Services.Windows
 
                     var gch = GCHandle.Alloc(icm);
                     SetWindowSubclass(hwnd, SubclassProc, IntPtr.Zero, GCHandle.ToIntPtr(gch));
-
+                    SetForegroundWindow(hMenu);
                     uint selectedCmd = TrackPopupMenuEx(hMenu, (uint)(TPM.LEFTALIGN | TPM.RETURNCMD | TPM.RIGHTBUTTON), screenX, screenY, hwnd, IntPtr.Zero);
                     if (selectedCmd > 0)
                     {

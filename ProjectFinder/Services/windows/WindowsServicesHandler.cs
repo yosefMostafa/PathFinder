@@ -1,4 +1,5 @@
 using System;
+using Microsoft.UI.Windowing;
 using ProjectFinder.Services.Windows;
 
 namespace ProjectFinder.Services.windows;
@@ -16,6 +17,10 @@ public class WindowsServicesHandler : ShellContextMenuHelper
         Show(path, (int)x, (int)y);
 
     }
+    public static void CloseMenuDelegate()
+    {
+        CloseContextMenu();
+    }
     public static Microsoft.UI.Windowing.AppWindow? GetAppWindow()
     {
         if (GetParentWindow() == null)
@@ -29,7 +34,7 @@ public class WindowsServicesHandler : ShellContextMenuHelper
             return GetAppWindow(GetParentWindow()!);
         }
     }
-    public static void ToggleFullScreen()
+    public static void ToggleFullScreenAsync()
     {
         MauiWinUIWindow? window = GetParentWindow();
         if (window == null)
@@ -37,24 +42,27 @@ public class WindowsServicesHandler : ShellContextMenuHelper
             Console.WriteLine("Window is null, cannot toggle fullscreen.");
             return;
         }
+
         var appWindow = GetAppWindow(window);
+
+   
 
         switch (appWindow.Presenter)
         {
-            case Microsoft.UI.Windowing.OverlappedPresenter overlappedPresenter:
-                if (overlappedPresenter.State == Microsoft.UI.Windowing.OverlappedPresenterState.Maximized)
-                {
-                    overlappedPresenter.SetBorderAndTitleBar(true, true);
-                    overlappedPresenter.Restore();
-                }
-                else
-                {
-                    overlappedPresenter.SetBorderAndTitleBar(false, false);
-                    overlappedPresenter.Maximize();
-                }
-
+            case FullScreenPresenter:
+                appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
                 break;
 
+            case OverlappedPresenter:
+                appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+                break;
+
+            default:
+                appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+                break;
         }
+
+        // Optional delay for layout settle
+
     }
 }

@@ -113,7 +113,7 @@ namespace backendLogic.src.searchEngine.models
         }
         public override bool RequirFolderSize()
         {
-            return false; // Node.js projects often require folder size calculations
+            return true; // Node.js projects often require folder size calculations
         }
         public override void RunLogic()
         {

@@ -17,6 +17,10 @@ namespace ProjectFinder.Services
         private readonly List<string> _imageExtensions = new() { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".svg" };
         private readonly List<string> _documentExtensions = new() { ".pdf", ".doc", ".docx", ".txt", ".rtf", ".xls", ".xlsx", ".ppt", ".pptx" };
 
+        public void changeEngineSearch(ProjectTypeEnum projectType)
+        {
+            _engine.ChangeProjectType(projectType);
+        }
         public async Task<List<FileItem>> GetFilesAsync(string? rootFilePath = null)
         {
             List<EverythingResult> results;

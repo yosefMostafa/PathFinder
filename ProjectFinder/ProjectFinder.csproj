@@ -25,7 +25,8 @@
 
     <ItemGroup>
         <!-- App Icon -->
-        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+        <MauiIcon Include="Resources\AppIcon\appicon.svg"
+            ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
@@ -43,10 +44,10 @@
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.40" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
     </ItemGroup>
-<ItemGroup>
-	  <ProjectReference Include="..\backendLogic\backendLogic.csproj" />
-	</ItemGroup>    
-    
+    <ItemGroup>
+        <ProjectReference Include="..\backendLogic\backendLogic.csproj" />
+    </ItemGroup>
+
     <PropertyGroup>
         <WindowsPackageType>None</WindowsPackageType>
     </PropertyGroup>

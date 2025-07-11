@@ -27,6 +27,10 @@ namespace backendLogic.src.searchEngine
         {
             return ProjectType.GetSearchResults();
         }
+        public void ChangeProjectType(ProjectTypeEnum projectType)
+        {
+            ProjectType = new ProjectBuilder(projectType).Project;
+        }
         public async Task Run()
         {
             Console.WriteLine("Running search for: " + ProjectType.GetSearchString());

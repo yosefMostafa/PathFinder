@@ -10,13 +10,17 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using ProjectFinder.Services.Windows;
 using ProjectFinder.Services.windows;
+using System.Threading.Tasks;
+using backendLogic.src.searchEngine.models;
 namespace ProjectFinder
 {
     public class MainPageViewModel : INotifyPropertyChanged
     {
         private readonly FileService _fileService;
+        private bool _isGettingData = false;
         private readonly FileOperationService _fileOperationService;
         private readonly BookmarkService _bookmarkService;
+
         private string _searchText = string.Empty;
         private string _selectedFilter = "All";
         private string _statusText = "Ready";
@@ -45,6 +49,7 @@ namespace ProjectFinder
             InitializeCommands();
             LoadInitialFiles();
         }
+
 
         public ObservableCollection<FileItem> Files { get; }
         public ObservableCollection<object> SelectedFiles { get; }
@@ -96,6 +101,16 @@ namespace ProjectFinder
             set
             {
                 _isRegexEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IsGettingData
+        {
+            get => _isGettingData;
+            private set
+            {
+                _isGettingData = value;
+                Console.WriteLine($"IsGettingData set to: {_isGettingData}");
                 OnPropertyChanged();
             }
         }
@@ -154,7 +169,8 @@ namespace ProjectFinder
         public ICommand OpenFileCommand { get; private set; } = null!;
         public ICommand RenameCommand { get; private set; } = null!;
         public ICommand RightClickCommand { get; private set; } = null!;
-        public ICommand     FullScreenToggler { get; private set; } = null!;
+        public ICommand FullScreenToggler { get; private set; } = null!;
+        public ICommand ChangeProjectCommand { get; private set; } = null!;
 
 
         private void InitializeCommands()
@@ -180,6 +196,9 @@ namespace ProjectFinder
             OpenFileCommand = new RelayCommand<FileItem>(OnOpenFile);
             RenameCommand = new RelayCommand(OnRename, () => SelectedFiles.Count == 1);
             FullScreenToggler = new RelayCommand(ToggleFullScreen);
+            ChangeProjectCommand = new RelayCommand<string>(param =>
+                { OnChangeProject(param!); }
+            );
             RightClickCommand = new RelayCommand<(FileItem, double, double)>(tuple =>
             {
                 var (item, x, y) = tuple;
@@ -192,7 +211,7 @@ namespace ProjectFinder
         private void ToggleFullScreen()
         {
 #if WINDOWS
-            WindowsServicesHandler.ToggleFullScreen();
+            WindowsServicesHandler.ToggleFullScreenAsync();
 #endif
         }
         private void UpdateCommandStates()
@@ -203,9 +222,34 @@ namespace ProjectFinder
             ((RelayCommand)DeleteCommand).RaiseCanExecuteChanged();
             ((RelayCommand)RenameCommand).RaiseCanExecuteChanged();
         }
+        private void OnChangeProject(string projectName)
+        {
+            switch (projectName)
+            {
+                case "Node":
+                    _fileService.changeEngineSearch(ProjectTypeEnum.Node);
+                    LoadInitialFiles();
+                    break;
+                case "Flutter":
+                    _fileService.changeEngineSearch(ProjectTypeEnum.FlutterProjects);
+                    LoadInitialFiles();
+                    break;
+                case "PDF":
+                    _fileService.changeEngineSearch(ProjectTypeEnum.PDF);
+                    LoadInitialFiles();
+                    break;
+                // Add more cases as needed
+                default:
+                    Console.WriteLine($"Unknown project type: {projectName}");
+                    return;
+            }
+            // Logic to change project, e.g., open a dialog to select a new project
+
+        }
         private void OnRightClick(FileItem file, double x, double y)
         {
             Console.WriteLine($"Right-clicked on file: {file.FullPath} at ({x}, {y})");
+            WindowsServicesHandler.CloseMenuDelegate();
             WindowsServicesHandler.ShowMenuDelegate(file.ParentPath, x, y);
 
         }
@@ -214,7 +258,10 @@ namespace ProjectFinder
 
             try
             {
+                IsGettingData = true;
                 StatusText = "Loading files...";
+
+                Console.WriteLine(IsGettingData);
                 Files.Clear();
                 List<FileItem> files = await _fileService.GetFilesAsync();
 
@@ -224,6 +271,8 @@ namespace ProjectFinder
                 {
                     Files.Add(file);
                 }
+                IsGettingData = false;
+                Console.WriteLine(IsGettingData);
 
                 StatusText = $"{Files.Count:N0} objects";
                 Console.WriteLine($"Loaded {Files.Count} files.");

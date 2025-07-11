@@ -6,6 +6,13 @@ namespace ProjectFinder.Commands
     {
         private readonly Action _execute;
         private readonly Func<bool>? _canExecute;
+        private Action<string> onChangeProject;
+
+        public RelayCommand(Action<string> onChangeProject)
+        {
+            this.onChangeProject = onChangeProject;
+        }
+
 
         public RelayCommand(Action execute, Func<bool>? canExecute = null)
         {

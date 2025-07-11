@@ -2,7 +2,7 @@ namespace ProjectFinder;
 
 using Microsoft.Maui.Handlers;
 using ProjectFinder.Models;
-
+using WinRT;
 
 
 public partial class MainPage : ContentPage
@@ -12,23 +12,27 @@ public partial class MainPage : ContentPage
 	public MainPage()
 	{
 		InitializeComponent();
-		var viewModel = new MainPageViewModel();
-		BindingContext = viewModel;
-		AddFullscreenTogglerToWin(viewModel);
+		BindingContext = new MainPageViewModel();
+		// BindingContext = viewModel;
+		AddFullscreenTogglerToWin(BindingContext.As<MainPageViewModel>());
 
 	}
 	private void AddFullscreenTogglerToWin(MainPageViewModel viewModel)
 	{
 #if WINDOWS
-		ToolbarItem toggleItem = new ToolbarItem
+		for (int i = 0; i < MenuBarItems.Count; i++)
 		{
-			Text = "Toggle Fullscreen",
-			Command = viewModel.FullScreenToggler,
-			Order = ToolbarItemOrder.Primary,
-			// Priority = 0
-		};
-		ToolbarItems.Add(toggleItem);
-
+			if (MenuBarItems[i].Text == "View")
+			{
+				MenuBarItems[i].Add(new MenuFlyoutItem
+				{
+					Text = "Toggle Fullscreen",
+					Command = viewModel.FullScreenToggler,
+					// Priority = 2
+				});
+				break;
+			}
+		}
 #endif
 	}
 

@@ -1,6 +1,6 @@
+using System.Collections.ObjectModel;
 using Microsoft.Maui.Handlers;
-using Microsoft.UI;
-using Microsoft.UI.Windowing;
+
 using ProjectFinder.Models;
 using ProjectFinder.Services.windows;
 
@@ -13,6 +13,27 @@ public partial class CustomFlexLayout : ContentView
 		InitializeComponent();
 
 	}
+	public static readonly BindableProperty FilesDataProperty =
+		BindableProperty.Create(
+			nameof(FilesData),
+			typeof(ObservableCollection<FileItem>),
+			typeof(CustomFlexLayout),
+			default(ObservableCollection<FileItem>)
+			);
+
+	public ObservableCollection<FileItem> FilesData
+	{
+		get => (ObservableCollection<FileItem>)GetValue(FilesDataProperty);
+		set => SetValue(FilesDataProperty, value);
+	}
+
+	// private static void OnFilesChanged(BindableObject bindable, object oldValue, object newValue)
+	// {
+	//     if (bindable is CustomFlexLayout control && newValue is IEnumerable<FileItem> items)
+	//     {
+	//         control.List.ItemsSource = items;
+	//     }
+	// }
 	private void OnItemFrameLoaded(object sender, EventArgs e)
 	{
 #if WINDOWS

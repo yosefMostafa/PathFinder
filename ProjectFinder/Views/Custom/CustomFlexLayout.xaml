@@ -3,34 +3,39 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProjectFinder.Views.Custom.CustomFlexLayout"
              BackgroundColor="Transparent"
-             >
+             x:Name="Root">
 
-    <ScrollView  >
+    <CheckBox x:Name="MyCheckBox"
+        WidthRequest="100"
+        HeightRequest="40"
+        Color="Blue"
+        />
+    <ScrollView  IsVisible="{Binding IsChecked, Source={x:Reference MyCheckBox}}">
+
         <FlexLayout
             Direction="Row"
             Wrap="Wrap"
             JustifyContent="Start"
             AlignItems="Start"
             Padding="10"
-            BindableLayout.ItemsSource="{Binding Files}">
+            BindableLayout.ItemsSource="{Binding FilesData, Source={x:Reference Root}}">
 
             <BindableLayout.ItemTemplate>
                 <DataTemplate>
                     <Frame
-                       
                         Margin="5"
                         Padding="8"
-                        WidthRequest="300"
+                        WidthRequest="255"
                         HasShadow="True"
-                        HeightRequest ="200"
+                        HeightRequest="200"
                         BorderColor="LightGray"
                         CornerRadius="10"
                         BackgroundColor="White">
 
-                        <VerticalStackLayout 
+                        <VerticalStackLayout
                             VerticalOptions="Center"
-                             Loaded="OnItemFrameLoaded">
-                             <Label
+                            Loaded="OnItemFrameLoaded">
+                            <Label
                                 Text="{Binding ParentType, StringFormat='{}{0} project'}"
                                 FontAttributes="Bold"
                                 FontSize="14"

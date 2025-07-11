@@ -17,12 +17,12 @@ public class FlutterProjects : ProjectType
                 continue;
             if (fullPath.Contains("cache") || fullPath.Contains("temp"))
                 continue;
-           
-                if (IsFlutterInstalledPath(fullPath))
-                    continue; // or continue; depending on logic
-                
 
-              
+            if (IsFlutterInstalledPath(fullPath))
+                continue; // or continue; depending on logic
+
+
+
 
             filteredResults.Add(result);
         }
@@ -36,13 +36,19 @@ public class FlutterProjects : ProjectType
             string flutterPathCandidate = path.Substring(0, index + "\\flutter\\".Length);
             index += "\\flutter\\".Length;
             if (File.Exists(Path.Combine(flutterPathCandidate, "bin", "flutter.bat")) ||
-              File.Exists(Path.Combine(flutterPathCandidate, "bin", "flutter")))
+                File.Exists(Path.Combine(flutterPathCandidate, "bin", "flutter")))
                 return true; // Found a valid Flutter installation path
 
         }
         return false; // No valid Flutter installation path found
 
     }
+
+    public override bool RequirFolderSize()
+    {
+        return true;
+    }
+
     public bool IsGamePath(string path)
     {
         var gameExe = Directory.EnumerateFiles(path, "*.exe", SearchOption.TopDirectoryOnly)
