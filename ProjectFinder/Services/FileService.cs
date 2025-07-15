@@ -44,6 +44,20 @@ namespace ProjectFinder.Services
             return results.Select(result => FileItem.FromEverythingResult(result)).ToList();
 
         }
+        public List<DriveGroup> GetFilesForEachDrive(List<FileItem> files)
+        {
+            var filesSortedByDrive = new List<DriveGroup>();
+            var groupedFiles = files.GroupBy(f => f.GetDriveName());
+           
+            foreach (var group in groupedFiles)
+            {
+                DriveGroup driveGroup = new DriveGroup(group.Key, new ObservableCollection<FileItem>(group.ToList()));
+          
+                filesSortedByDrive.Add(driveGroup);
+            }
+
+            return filesSortedByDrive;
+        }
 
         public async Task<List<FileItem>> SearchFilesAsync(string searchTerm, string filter = "All", bool useRegex = false)
         {
@@ -175,6 +189,7 @@ namespace ProjectFinder.Services
                 LastModified = info.LastWriteTime
             };
         }
+
 
         private string GetFileIcon(string fileName, bool isDirectory)
         {

@@ -22,7 +22,7 @@
                 FontSize="16"
                 TextColor="Black"
                 VerticalOptions="Center"
-                Text="Expandable Section"/>
+                Text="Expand"/>
             <CheckBox
                 IsChecked="{Binding IsExpanded, Source={x:Reference Root}}"
                 HorizontalOptions="Start"

@@ -59,7 +59,23 @@
                 HorizontalOptions="Center"
                 Color="Blue"/>
         </Grid>
-        <ScrollView Grid.Row="1">
+        <CollectionView
+            Grid.Row="1"
+            ItemsSource="{Binding FilesSortedByDrive}"
+            SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate  x:DataType="models:DriveGroup">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding DriveName}"
+                                FontAttributes="Bold"
+                                TextColor="Black"
+                                FontSize="16"/>
+                        <grid:CustomFlexLayout FilesData="{Binding Files}"/>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <!-- <ScrollView Grid.Row="1">
             <VerticalStackLayout>
 
                 <grid:CustomFlexLayout 
@@ -67,7 +83,7 @@
                 <grid:CustomFlexLayout 
                                        FilesData="{Binding Files}"/>
             </VerticalStackLayout>
-        </ScrollView>
+        </ScrollView> -->
 
 
         <!-- Status Bar -->

@@ -134,6 +134,14 @@ namespace ProjectFinder.Models
                 OnPropertyChanged();
             }
         }
+        public string GetDriveName()
+        {
+            if (string.IsNullOrEmpty(_parentPath))
+                return "Unknown Drive";
+
+            var driveName = _parentPath.Split('\\').FirstOrDefault();
+            return driveName ?? "Unknown Drive";
+        }
 
         public bool IsSelected
         {

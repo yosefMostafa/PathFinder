@@ -25,6 +25,7 @@ namespace ProjectFinder
         private string _selectedFilter = "All";
         private string _statusText = "Ready";
         private bool _isRegexEnabled;
+        private List<FileItem> _files;
         private bool _isAudioFilterEnabled;
         private bool _matchCase;
         private bool _matchWholeWord;
@@ -35,7 +36,9 @@ namespace ProjectFinder
             _fileService = new FileService();
             _fileOperationService = new FileOperationService();
             _bookmarkService = new BookmarkService();
-            Files = new ObservableCollection<FileItem>();
+
+            _files = new List<FileItem>();
+            FilesSortedByDrive = new ObservableCollection<DriveGroup>();
             SelectedFiles = new ObservableCollection<object>();
 
 #if WINDOWS
@@ -51,7 +54,9 @@ namespace ProjectFinder
         }
 
 
-        public ObservableCollection<FileItem> Files { get; }
+        public ObservableCollection<DriveGroup> FilesSortedByDrive { get; }
+
+        public List<FileItem> Files { get => _files; private set => _files = value; }
         public ObservableCollection<object> SelectedFiles { get; }
 
         public string SearchText
@@ -261,8 +266,8 @@ namespace ProjectFinder
                 IsGettingData = true;
                 StatusText = "Loading files...";
 
-                Console.WriteLine(IsGettingData);
                 Files.Clear();
+                FilesSortedByDrive.Clear();
                 List<FileItem> files = await _fileService.GetFilesAsync();
 
 
@@ -272,7 +277,12 @@ namespace ProjectFinder
                     Files.Add(file);
                 }
                 IsGettingData = false;
-                Console.WriteLine(IsGettingData);
+
+                foreach (var Grouped in _fileService.GetFilesForEachDrive(files))
+                {
+                    FilesSortedByDrive.Add(Grouped);
+                    Console.WriteLine($"Added drive group: {Grouped.DriveName} with {Grouped.Files.Count} files.");
+                }
 
                 StatusText = $"{Files.Count:N0} objects";
                 Console.WriteLine($"Loaded {Files.Count} files.");
@@ -280,9 +290,11 @@ namespace ProjectFinder
             }
             catch (Exception ex)
             {
+
                 StatusText = $"Error loading files: {ex.Message}";
             }
         }
+
 
         private async void PerformSearch()
         {
