@@ -7,30 +7,56 @@
              x:Name="Root">
 
 
+    <Grid
+        RowDefinitions="Auto, *"
+        VerticalOptions="Start"
+        Loaded="OnItemFrameLoaded">
 
-    <mct:Expander>
-        <mct:Expander.Header>
-            <Label Text="Show Projects"
-                   FontAttributes="Bold"
-                   TextColor="Black"
-                   FontSize="16"/>
-        </mct:Expander.Header>
+        <HorizontalStackLayout
+            Grid.Row="0"
+            Spacing="10"
+            VerticalOptions="Start">
+            <Label
+                Margin="10,0,0,0"
+                FontAttributes="Bold"
+                FontSize="16"
+                TextColor="Black"
+                VerticalOptions="Center"
+                Text="Expandable Section"/>
+            <CheckBox
+                IsChecked="{Binding IsExpanded, Source={x:Reference Root}}"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                Color="blue"/>
+
+
+        </HorizontalStackLayout>
+
+
         <CollectionView
-            ItemsLayout="VerticalGrid, 5"
-VerticalOptions="Fill"
+            Grid.Row="1"
+            IsVisible="{Binding IsExpanded, Source={x:Reference Root}}"
             ItemsSource="{Binding FilesData, Source={x:Reference Root}}">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical"
+                                 Span="5"
+                                 HorizontalItemSpacing="12"
+                                 VerticalItemSpacing="12"/>
+            </CollectionView.ItemsLayout>
 
             <CollectionView.ItemTemplate>
+
+
+
                 <DataTemplate>
-                    <Frame
-                        Margin="5"
-                        Padding="8"
-                    
-                        HasShadow="True"
-                        HeightRequest="200"
-                        BorderColor="LightGray"
-                        CornerRadius="10"
-                        BackgroundColor="White">
+
+                    <Border>
+                        <Border.Stroke>
+                            <SolidColorBrush Color="Black"/>
+                        </Border.Stroke>
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
 
                         <VerticalStackLayout
                             VerticalOptions="Center"
@@ -52,11 +78,11 @@ VerticalOptions="Fill"
                                 TextColor="Black"
                                 HorizontalOptions="Center"/>
                         </VerticalStackLayout>
+                    </Border>
 
-                    </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
 
         </CollectionView>
-    </mct:Expander>
+    </Grid>
 </ContentView>

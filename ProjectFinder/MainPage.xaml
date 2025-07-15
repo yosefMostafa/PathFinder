@@ -36,7 +36,7 @@
     </ContentPage.MenuBarItems>
 
     <!-- Toolbar Menu Items -->
-    
+
     <!-- Page Layout -->
 
     <!-- Page Layout -->
@@ -48,30 +48,7 @@
             <RowDefinition Height="Auto"/>
             <!-- Status bar -->
         </Grid.RowDefinitions>
-        <!-- <CollectionView ItemsSource="{Binding ProjectTypes}"
-                        SelectionMode="Single"
-                        ItemsLayout="HorizontalList"
-                        SelectionChanged="OnProjectSelected">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Padding="10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="35"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.RowSpan="2"
-                               Text="{Binding Name}"
-                               HeightRequest="60"
-                               WidthRequest="60"/>
 
-
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView> -->
-        <!-- Card Layout (Main Content) -->
         <Grid Grid.Row="1"
               BackgroundColor="#FFFFFF"
               Padding="10,10,10,0">
@@ -82,9 +59,15 @@
                 HorizontalOptions="Center"
                 Color="Blue"/>
         </Grid>
-        <grid:CustomFlexLayout Grid.Row="1" 
-            FilesData="{Binding Files}"
-            />
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout>
+
+                <grid:CustomFlexLayout 
+                                       FilesData="{Binding Files}"/>
+                <grid:CustomFlexLayout 
+                                       FilesData="{Binding Files}"/>
+            </VerticalStackLayout>
+        </ScrollView>
 
 
         <!-- Status Bar -->

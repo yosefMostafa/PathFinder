@@ -31,7 +31,7 @@ namespace backendLogic.src.searchEngine
         {
             ProjectType = new ProjectBuilder(projectType).Project;
         }
-        public async Task Run()
+        public async Task Run(bool requireFolderSize = false)
         {
             Console.WriteLine("Running search for: " + ProjectType.GetSearchString());
             await StartSearch(ProjectType.GetSearchString());
@@ -39,7 +39,7 @@ namespace backendLogic.src.searchEngine
             ProjectType.SetSearchResults(_searchResults.Select(result => result.Clone()).ToList());
             ProjectType.RunLogic();
             _searchResults = ProjectType.GetSearchResults();
-            if (ProjectType.RequirFolderSize())
+            if (ProjectType.RequirFolderSize() && requireFolderSize)
             {
                 Console.WriteLine("Calculating folder sizes...");
                 for (int i = 0; i < _searchResults.Count; i++)

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using Microsoft.Maui.Handlers;
 
 using ProjectFinder.Models;
@@ -11,8 +12,27 @@ public partial class CustomFlexLayout : ContentView
 	public CustomFlexLayout()
 	{
 		InitializeComponent();
-
 	}
+public static readonly BindableProperty IsExpandedProperty =
+	BindableProperty.Create(
+		nameof(IsExpanded),
+		typeof(bool),
+		typeof(CustomFlexLayout),
+		false,
+		BindingMode.TwoWay,
+		 propertyChanged: (bindable, oldValue, newValue) =>
+        {
+            var control = (CustomFlexLayout)bindable;
+        });
+
+	public bool IsExpanded
+	{
+		get => (bool)GetValue(IsExpandedProperty);
+		set => SetValue(IsExpandedProperty, value);
+	}
+
+	
+
 	public static readonly BindableProperty FilesDataProperty =
 		BindableProperty.Create(
 			nameof(FilesData),
@@ -96,5 +116,11 @@ public partial class CustomFlexLayout : ContentView
 				}
 			}
 		};
+	}
+	public event PropertyChangedEventHandler? PropertyChanged;
+
+	protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+	{
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	}
 }
